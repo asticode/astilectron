@@ -1,0 +1,7 @@
+{
+  "name": "Astilectron",
+  "description": "",
+  "devDependencies": {
+    "electron": "1.6.5"
+  }
+}
