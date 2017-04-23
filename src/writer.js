@@ -9,8 +9,10 @@ class Writer {
     }
 
     // write writes an event to the stdout
-    write(targetID, eventName) {
-        process.stdout.write(JSON.stringify({name: eventName, targetID: targetID}) + this.boundary + "\n")
+    write(targetID, eventName, message) {
+        var data = {name: eventName, targetID: targetID}
+        if (typeof message != "undefined") data.message = message
+        process.stdout.write(JSON.stringify(data) + this.boundary + "\n")
     }
 }
 

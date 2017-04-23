@@ -1,8 +1,6 @@
 'use strict'
 
-const electron = require('electron')
-const app = electron.app
-const BrowserWindow = electron.BrowserWindow
+const {app, BrowserWindow, ipcMain} = require('electron')
 const consts = require('./src/consts.js')
 const rl = require('readline').createInterface({input: process.stdin})
 const writer = require('./src/writer.js').init(consts.boundary)
@@ -13,6 +11,11 @@ let elements = {}
 app.on('ready',() => {
     // Send electron.ready event
     writer.write(consts.mainTargetID, consts.eventNames.appEventReady)
+
+    // Listen on main ipcMain
+    ipcMain.on(consts.eventNames.ipcWindowMessage, (event, arg) => {
+        writer.write(arg.targetID, consts.eventNames.windowEventMessage, arg.message)
+    })
 
     // Read from stdin
     rl.on('line', function(line){
@@ -47,6 +50,9 @@ app.on('ready',() => {
                 case consts.eventNames.windowCmdMaximize:
                 elements[json.targetID].maximize()
                 break;
+                case consts.eventNames.windowCmdMessage:
+                elements[json.targetID].webContents.send(consts.eventNames.ipcWindowMessage, json.message)
+                break;
                 case consts.eventNames.windowCmdMinimize:
                 elements[json.targetID].minimize()
                 break;
@@ -61,6 +67,12 @@ app.on('ready',() => {
                 break;
                 case consts.eventNames.windowCmdShow:
                 elements[json.targetID].show()
+                break;
+                case consts.eventNames.windowCmdWebContentsCloseDevTools:
+                elements[json.targetID].webContents.closeDevTools()
+                break;
+                case consts.eventNames.windowCmdWebContentsOpenDevTools:
+                elements[json.targetID].webContents.openDevTools()
                 break;
                 case consts.eventNames.windowCmdUnmaximize:
                 elements[json.targetID].unmaximize()
@@ -84,11 +96,27 @@ function windowCreate(json) {
     elements[json.targetID].on('maximize', () => { writer.write(json.targetID, consts.eventNames.windowEventMaximize) })
     elements[json.targetID].on('minimize', () => { writer.write(json.targetID, consts.eventNames.windowEventMinimize) })
     elements[json.targetID].on('move', () => { writer.write(json.targetID, consts.eventNames.windowEventMove) })
-    elements[json.targetID].on('ready-to-show', () => { writer.write(json.targetID, consts.eventNames.windowReadyToShow) })
+    elements[json.targetID].on('ready-to-show', () => { writer.write(json.targetID, consts.eventNames.windowEventReadyToShow) })
     elements[json.targetID].on('resize', () => { writer.write(json.targetID, consts.eventNames.windowEventResize) })
     elements[json.targetID].on('restore', () => { writer.write(json.targetID, consts.eventNames.windowEventRestore) })
     elements[json.targetID].on('show', () => { writer.write(json.targetID, consts.eventNames.windowEventShow) })
     elements[json.targetID].on('unmaximize', () => { writer.write(json.targetID, consts.eventNames.windowEventUnmaximize) })
     elements[json.targetID].on('unresponsive', () => { writer.write(json.targetID, consts.eventNames.windowEventUnresponsive) })
-    writer.write(json.targetID, consts.eventNames.windowDoneCreate)
+    elements[json.targetID].webContents.on('did-finish-load', () => {
+        elements[json.targetID].webContents.executeJavaScript(
+            `const ipcRenderer = require('electron').ipcRenderer
+            var astilectron = {
+                listen: function(callback) {
+                    ipcRenderer.on('`+ consts.eventNames.ipcWindowMessage +`', function(event, message) {
+                        callback(message)
+                    })
+                },
+                send: function(message) {
+                    ipcRenderer.send('`+ consts.eventNames.ipcWindowMessage +`', {message: message, targetID: '`+ json.targetID +`'})
+                }
+            }
+            document.dispatchEvent(new Event('astilectron-ready'))`
+        )
+        writer.write(json.targetID, consts.eventNames.windowEventDidFinishLoad)
+    })
 }
