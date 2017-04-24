@@ -1,7 +1,6 @@
 'use strict'
 
 module.exports = {
-    boundary: '--++__astilectron_boundary__++--',
     eventNames: {
         appEventReady: "app.event.ready",
         ipcWindowMessage: "ipc.window.message",
