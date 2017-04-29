@@ -2,22 +2,22 @@
 
 const {app, BrowserWindow, ipcMain} = require('electron')
 const consts = require('./src/consts.js')
-const rl = require('readline').createInterface({input: process.stdin})
-const writer = require('./src/writer.js').init(consts.boundary)
+const client = require('./src/client.js').init(consts.boundary)
+const rl = require('readline').createInterface({input: client.socket})
 
 let elements = {}
 
 // App is ready
 app.on('ready',() => {
     // Send electron.ready event
-    writer.write(consts.mainTargetID, consts.eventNames.appEventReady)
+    client.write(consts.mainTargetID, consts.eventNames.appEventReady)
 
     // Listen on main ipcMain
     ipcMain.on(consts.eventNames.ipcWindowMessage, (event, arg) => {
-        writer.write(arg.targetID, consts.eventNames.windowEventMessage, arg.message)
+        client.write(arg.targetID, consts.eventNames.windowEventMessage, arg.message)
     })
 
-    // Read from stdin
+    // Read from client
     rl.on('line', function(line){
         // Check whether the boundary is there
         if (line.endsWith(consts.boundary)) {
@@ -86,22 +86,22 @@ app.on('ready',() => {
 function windowCreate(json) {
     elements[json.targetID] = new BrowserWindow(json.windowOptions)
     elements[json.targetID].loadURL(json.url);
-    elements[json.targetID].on('blur', () => { writer.write(json.targetID, consts.eventNames.windowEventBlur) })
+    elements[json.targetID].on('blur', () => { client.write(json.targetID, consts.eventNames.windowEventBlur) })
     elements[json.targetID].on('closed', () => {
-        writer.write(json.targetID, consts.eventNames.windowEventClosed)
+        client.write(json.targetID, consts.eventNames.windowEventClosed)
         delete elements[json.targetID]
     })
-    elements[json.targetID].on('focus', () => { writer.write(json.targetID, consts.eventNames.windowEventFocus) })
-    elements[json.targetID].on('hide', () => { writer.write(json.targetID, consts.eventNames.windowEventHide) })
-    elements[json.targetID].on('maximize', () => { writer.write(json.targetID, consts.eventNames.windowEventMaximize) })
-    elements[json.targetID].on('minimize', () => { writer.write(json.targetID, consts.eventNames.windowEventMinimize) })
-    elements[json.targetID].on('move', () => { writer.write(json.targetID, consts.eventNames.windowEventMove) })
-    elements[json.targetID].on('ready-to-show', () => { writer.write(json.targetID, consts.eventNames.windowEventReadyToShow) })
-    elements[json.targetID].on('resize', () => { writer.write(json.targetID, consts.eventNames.windowEventResize) })
-    elements[json.targetID].on('restore', () => { writer.write(json.targetID, consts.eventNames.windowEventRestore) })
-    elements[json.targetID].on('show', () => { writer.write(json.targetID, consts.eventNames.windowEventShow) })
-    elements[json.targetID].on('unmaximize', () => { writer.write(json.targetID, consts.eventNames.windowEventUnmaximize) })
-    elements[json.targetID].on('unresponsive', () => { writer.write(json.targetID, consts.eventNames.windowEventUnresponsive) })
+    elements[json.targetID].on('focus', () => { client.write(json.targetID, consts.eventNames.windowEventFocus) })
+    elements[json.targetID].on('hide', () => { client.write(json.targetID, consts.eventNames.windowEventHide) })
+    elements[json.targetID].on('maximize', () => { client.write(json.targetID, consts.eventNames.windowEventMaximize) })
+    elements[json.targetID].on('minimize', () => { client.write(json.targetID, consts.eventNames.windowEventMinimize) })
+    elements[json.targetID].on('move', () => { client.write(json.targetID, consts.eventNames.windowEventMove) })
+    elements[json.targetID].on('ready-to-show', () => { client.write(json.targetID, consts.eventNames.windowEventReadyToShow) })
+    elements[json.targetID].on('resize', () => { client.write(json.targetID, consts.eventNames.windowEventResize) })
+    elements[json.targetID].on('restore', () => { client.write(json.targetID, consts.eventNames.windowEventRestore) })
+    elements[json.targetID].on('show', () => { client.write(json.targetID, consts.eventNames.windowEventShow) })
+    elements[json.targetID].on('unmaximize', () => { client.write(json.targetID, consts.eventNames.windowEventUnmaximize) })
+    elements[json.targetID].on('unresponsive', () => { client.write(json.targetID, consts.eventNames.windowEventUnresponsive) })
     elements[json.targetID].webContents.on('did-finish-load', () => {
         elements[json.targetID].webContents.executeJavaScript(
             `const ipcRenderer = require('electron').ipcRenderer
@@ -117,6 +117,6 @@ function windowCreate(json) {
             }
             document.dispatchEvent(new Event('astilectron-ready'))`
         )
-        writer.write(json.targetID, consts.eventNames.windowEventDidFinishLoad)
+        client.write(json.targetID, consts.eventNames.windowEventDidFinishLoad)
     })
 }
