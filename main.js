@@ -1,6 +1,7 @@
 'use strict'
 
-const {app, BrowserWindow, ipcMain} = require('electron')
+const electron = require('electron')
+const {app, BrowserWindow, ipcMain} = electron
 const consts = require('./src/consts.js')
 const client = require('./src/client.js').init()
 const rl = require('readline').createInterface({input: client.socket})
@@ -9,12 +10,26 @@ let elements = {}
 
 // App is ready
 app.on('ready',() => {
+    // Init
+    const screen = electron.screen
+    
     // Send electron.ready event
-    client.write(consts.mainTargetID, consts.eventNames.appEventReady)
+    client.write(consts.mainTargetID, consts.eventNames.appEventReady, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
+
+    // Listen to screen events
+    screen.on('display-added', function() {
+        client.write(consts.mainTargetID, consts.eventNames.displayEventAdded, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
+    })
+    screen.on('display-metrics-changed', function() {
+        client.write(consts.mainTargetID, consts.eventNames.displayEventMetricsChanged, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
+    })
+    screen.on('display-removed', function() {
+        client.write(consts.mainTargetID, consts.eventNames.displayEventRemoved, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
+    })
 
     // Listen on main ipcMain
     ipcMain.on(consts.eventNames.ipcWindowMessage, (event, arg) => {
-        client.write(arg.targetID, consts.eventNames.windowEventMessage, arg.message)
+        client.write(arg.targetID, consts.eventNames.windowEventMessage, {message: arg.message})
     })
 
     // Read from client

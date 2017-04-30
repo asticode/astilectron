@@ -3,6 +3,9 @@
 module.exports = {
     eventNames: {
         appEventReady: "app.event.ready",
+        displayEventAdded: "display.event.added",
+        displayEventMetricsChanged: "display.event.metrics.changed",
+        displayEventRemoved: "display.event.removed",
         ipcWindowMessage: "ipc.window.message",
         windowCmdBlur: "window.cmd.blur",
         windowCmdCenter: "window.cmd.center",
