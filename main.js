@@ -2,7 +2,7 @@
 
 const {app, BrowserWindow, ipcMain} = require('electron')
 const consts = require('./src/consts.js')
-const client = require('./src/client.js').init(consts.boundary)
+const client = require('./src/client.js').init()
 const rl = require('readline').createInterface({input: client.socket})
 
 let elements = {}
@@ -19,65 +19,62 @@ app.on('ready',() => {
 
     // Read from client
     rl.on('line', function(line){
-        // Check whether the boundary is there
-        if (line.endsWith(consts.boundary)) {
-            // Parse the JSON
-            var json = JSON.parse(line.slice(0, -consts.boundary.length))
+        // Parse the JSON
+        var json = JSON.parse(line)
 
-            // Switch on event name
-            switch (json.name) {
-                case consts.eventNames.windowCmdBlur:
-                elements[json.targetID].blur()
-                break;
-                case consts.eventNames.windowCmdCenter:
-                elements[json.targetID].center()
-                break;
-                case consts.eventNames.windowCmdClose:
-                elements[json.targetID].close()
-                break;
-                case consts.eventNames.windowCmdCreate:
-                windowCreate(json)
-                break;
-                case consts.eventNames.windowCmdDestroy:
-                elements[json.targetID].destroy()
-                break;
-                case consts.eventNames.windowCmdFocus:
-                elements[json.targetID].focus()
-                break;
-                case consts.eventNames.windowCmdHide:
-                elements[json.targetID].hide()
-                break;
-                case consts.eventNames.windowCmdMaximize:
-                elements[json.targetID].maximize()
-                break;
-                case consts.eventNames.windowCmdMessage:
-                elements[json.targetID].webContents.send(consts.eventNames.ipcWindowMessage, json.message)
-                break;
-                case consts.eventNames.windowCmdMinimize:
-                elements[json.targetID].minimize()
-                break;
-                case consts.eventNames.windowCmdMove:
-                elements[json.targetID].setPosition(json.windowOptions.x, json.windowOptions.y, true)
-                break;
-                case consts.eventNames.windowCmdResize:
-                elements[json.targetID].setSize(json.windowOptions.width, json.windowOptions.height, true)
-                break;
-                case consts.eventNames.windowCmdRestore:
-                elements[json.targetID].restore()
-                break;
-                case consts.eventNames.windowCmdShow:
-                elements[json.targetID].show()
-                break;
-                case consts.eventNames.windowCmdWebContentsCloseDevTools:
-                elements[json.targetID].webContents.closeDevTools()
-                break;
-                case consts.eventNames.windowCmdWebContentsOpenDevTools:
-                elements[json.targetID].webContents.openDevTools()
-                break;
-                case consts.eventNames.windowCmdUnmaximize:
-                elements[json.targetID].unmaximize()
-                break;
-            }
+        // Switch on event name
+        switch (json.name) {
+            case consts.eventNames.windowCmdBlur:
+            elements[json.targetID].blur()
+            break;
+            case consts.eventNames.windowCmdCenter:
+            elements[json.targetID].center()
+            break;
+            case consts.eventNames.windowCmdClose:
+            elements[json.targetID].close()
+            break;
+            case consts.eventNames.windowCmdCreate:
+            windowCreate(json)
+            break;
+            case consts.eventNames.windowCmdDestroy:
+            elements[json.targetID].destroy()
+            break;
+            case consts.eventNames.windowCmdFocus:
+            elements[json.targetID].focus()
+            break;
+            case consts.eventNames.windowCmdHide:
+            elements[json.targetID].hide()
+            break;
+            case consts.eventNames.windowCmdMaximize:
+            elements[json.targetID].maximize()
+            break;
+            case consts.eventNames.windowCmdMessage:
+            elements[json.targetID].webContents.send(consts.eventNames.ipcWindowMessage, json.message)
+            break;
+            case consts.eventNames.windowCmdMinimize:
+            elements[json.targetID].minimize()
+            break;
+            case consts.eventNames.windowCmdMove:
+            elements[json.targetID].setPosition(json.windowOptions.x, json.windowOptions.y, true)
+            break;
+            case consts.eventNames.windowCmdResize:
+            elements[json.targetID].setSize(json.windowOptions.width, json.windowOptions.height, true)
+            break;
+            case consts.eventNames.windowCmdRestore:
+            elements[json.targetID].restore()
+            break;
+            case consts.eventNames.windowCmdShow:
+            elements[json.targetID].show()
+            break;
+            case consts.eventNames.windowCmdWebContentsCloseDevTools:
+            elements[json.targetID].webContents.closeDevTools()
+            break;
+            case consts.eventNames.windowCmdWebContentsOpenDevTools:
+            elements[json.targetID].webContents.openDevTools()
+            break;
+            case consts.eventNames.windowCmdUnmaximize:
+            elements[json.targetID].unmaximize()
+            break;
         }
     })
 })
