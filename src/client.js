@@ -17,9 +17,9 @@ class Client {
     }
 
     // write writes an event to the server
-    write(targetID, eventName, message) {
+    write(targetID, eventName, payload) {
         var data = {name: eventName, targetID: targetID}
-        if (typeof message != "undefined") data.message = message
+        if (typeof payload != "undefined") Object.assign(data, payload)
         this.socket.write(JSON.stringify(data) + "\n")
     }
 }
