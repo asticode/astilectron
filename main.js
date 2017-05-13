@@ -13,6 +13,7 @@ let menus = {}
 app.on('ready',() => {
     // Init
     const screen = electron.screen
+    Menu.setApplicationMenu(null)
 
     // Listen to screen events
     screen.on('display-added', function() {
@@ -194,6 +195,7 @@ function setMenu(rootId) {
 // windowCreate creates a new window
 function windowCreate(json) {
     elements[json.targetID] = new BrowserWindow(json.windowOptions)
+    elements[json.targetID].setMenu(null)
     elements[json.targetID].loadURL(json.url);
     elements[json.targetID].on('blur', () => { client.write(json.targetID, consts.eventNames.windowEventBlur) })
     elements[json.targetID].on('closed', () => {
