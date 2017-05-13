@@ -40,9 +40,18 @@ app.on('ready',() => {
         switch (json.name) {
             // Menu
             case consts.eventNames.menuCmdCreate:
-            menus[json.menu.rootId] = menuCreate(json.menu)
+            menuCreate(json.menu)
+            menus[json.menu.rootId] = json.targetID
             setMenu(json.menu.rootId)
             client.write(json.targetID, consts.eventNames.menuEventCreated)
+            break;
+            case consts.eventNames.menuCmdDestroy:
+            elements[json.targetID] = null
+            if (menus[json.menu.rootId] == json.targetID) {
+                menus[json.menu.rootId] = null
+                setMenu(json.menu.rootId)
+            }
+            client.write(json.targetID, consts.eventNames.menuEventDestroyed)
             break;
 
             // Menu item
@@ -107,6 +116,7 @@ app.on('ready',() => {
             break;
             case consts.eventNames.windowCmdDestroy:
             elements[json.targetID].destroy()
+            elements[json.targetID] = null
             break;
             case consts.eventNames.windowCmdFocus:
             elements[json.targetID].focus()
@@ -189,7 +199,11 @@ function menuItemToJSON(menuItem) {
 
 // setMenu sets a menu
 function setMenu(rootId) {
-    rootId == consts.mainTargetID ? Menu.setApplicationMenu(menus[rootId]) : elements[json.menu.parentId].setMenu(menus[rootId])
+    var menu = null
+    if (typeof menus[rootId] !== "undefined" && typeof elements[menus[rootId]] !== "undefined") {
+        menu = elements[menus[rootId]]
+    }
+    rootId == consts.mainTargetID ? Menu.setApplicationMenu(menu) : elements[rootId].setMenu(menu)
 }
 
 // windowCreate creates a new window
