@@ -229,7 +229,8 @@ function windowCreate(json) {
     elements[json.targetID].on('unresponsive', () => { client.write(json.targetID, consts.eventNames.windowEventUnresponsive) })
     elements[json.targetID].webContents.on('did-finish-load', () => {
         elements[json.targetID].webContents.executeJavaScript(
-            `const ipcRenderer = require('electron').ipcRenderer
+            `const {ipcRenderer} = require('electron')
+            const {dialog} = require('electron').remote
             var astilectron = {
                 listen: function(callback) {
                     ipcRenderer.on('`+ consts.eventNames.ipcWindowMessage +`', function(event, message) {
@@ -238,6 +239,18 @@ function windowCreate(json) {
                 },
                 send: function(message) {
                     ipcRenderer.send('`+ consts.eventNames.ipcWindowMessage +`', {message: message, targetID: '`+ json.targetID +`'})
+                },
+                showErrorBox: function(title, content) {
+                    dialog.showErrorBox(title, content)
+                },
+                showMessageBox: function(options, callback) {
+                    dialog.showMessageBox(null, options, callback)
+                },
+                showOpenDialog: function(options, callback) {
+                    dialog.showOpenDialog(null, options, callback)
+                },
+                showSaveDialog: function(options, callback) {
+                    dialog.showSaveDialog(null, options, callback)
                 }
             }
             document.dispatchEvent(new Event('astilectron-ready'))`
