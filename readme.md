@@ -34,8 +34,8 @@ Check out [go-astilectron](https://github.com/asticode/go-astilectron) for `asti
 - [x] remote messaging (messages between GO and the JS in the webserver)
 - [x] multi screens/displays
 - [x] menu methods and events (create, insert, append, popup, clicked, ...)
+- [x] dialogs (open or save file, alerts, ...)
 - [ ] accelerators (shortcuts)
-- [ ] dialogs (open or save file, alerts, ...)
 - [ ] file methods (drag & drop, ...)
 - [ ] clipboard methods
 - [ ] power monitor events (suspend, resume, ...)
