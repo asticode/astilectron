@@ -1,7 +1,7 @@
 'use strict'
 
 const electron = require('electron')
-const {app, BrowserWindow, ipcMain, Menu, MenuItem} = electron
+const {app, BrowserWindow, ipcMain, Menu, MenuItem, Tray} = electron
 const consts = require('./src/consts.js')
 const client = require('./src/client.js').init()
 const rl = require('readline').createInterface({input: client.socket})
@@ -99,6 +99,23 @@ app.on('ready',() => {
             json.menuPopupOptions.async = true
             elements[json.targetID].popup(window, json.menuPopupOptions)
             client.write(json.targetID, consts.eventNames.subMenuEventPoppedUp)
+            break;
+
+            // Tray
+            case consts.eventNames.trayCmdCreate:
+            elements[json.targetID] = new Tray(json.trayOptions.image)
+            if (typeof json.menuId !== "undefined") {
+                elements[json.targetID].setContextMenu(elements[json.menuId]);
+            }
+            if (typeof json.trayOptions.tooltip !== "undefined") {
+                elements[json.targetID].setToolTip(json.trayOptions.tooltip);
+            }
+            client.write(json.targetID, consts.eventNames.trayEventCreated)
+            break;
+            case consts.eventNames.trayCmdDestroy:
+            elements[json.targetID].destroy()
+            elements[json.targetID] = null
+            client.write(json.targetID, consts.eventNames.trayEventDestroyed)
             break;
 
             // Window
