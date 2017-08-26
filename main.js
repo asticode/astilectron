@@ -103,14 +103,7 @@ app.on('ready',() => {
 
             // Tray
             case consts.eventNames.trayCmdCreate:
-            elements[json.targetID] = new Tray(json.trayOptions.image)
-            if (typeof json.menuId !== "undefined") {
-                elements[json.targetID].setContextMenu(elements[json.menuId]);
-            }
-            if (typeof json.trayOptions.tooltip !== "undefined") {
-                elements[json.targetID].setToolTip(json.trayOptions.tooltip);
-            }
-            client.write(json.targetID, consts.eventNames.trayEventCreated)
+            trayCreate(json)
             break;
             case consts.eventNames.trayCmdDestroy:
             elements[json.targetID].destroy()
@@ -221,6 +214,21 @@ function setMenu(rootId) {
         menu = elements[menus[rootId]]
     }
     rootId == consts.mainTargetID ? Menu.setApplicationMenu(menu) : elements[rootId].setMenu(menu)
+}
+
+// trayCreate creates a tray
+function trayCreate(json) {
+    elements[json.targetID] = new Tray(json.trayOptions.image)
+    if (typeof json.menuId !== "undefined") {
+        elements[json.targetID].setContextMenu(elements[json.menuId]);
+    }
+    if (typeof json.trayOptions.tooltip !== "undefined") {
+        elements[json.targetID].setToolTip(json.trayOptions.tooltip);
+    }
+    elements[json.targetID].on('click', () => { client.write(json.targetID, consts.eventNames.trayEventClicked) })
+    elements[json.targetID].on('double-click', () => { client.write(json.targetID, consts.eventNames.trayEventDoubleClicked) })
+    elements[json.targetID].on('right-click', () => { client.write(json.targetID, consts.eventNames.trayEventRightClicked) })
+    client.write(json.targetID, consts.eventNames.trayEventCreated)
 }
 
 // windowCreate creates a new window
