@@ -262,7 +262,13 @@ function windowCreate(json) {
                         callback(message)
                     })
                 },
-                send: function(message) {
+                callbackIdCounter: 1,
+                callbacks: {},
+                send: function(message, callback) {
+                    if (typeof callback !== "undefined") {
+                        message.callbackId = astilectron.callbackIdCounter++
+                        astilectron.callbacks[message.callbackId] = callback
+                    }
                     ipcRenderer.send('`+ consts.eventNames.ipcWindowMessage +`', {message: message, targetID: '`+ json.targetID +`'})
                 },
                 showErrorBox: function(title, content) {
@@ -278,6 +284,13 @@ function windowCreate(json) {
                     dialog.showSaveDialog(null, options, callback)
                 }
             }
+            astilectron.listen(function(message) {
+                if (typeof message.callbackId === "undefined" || typeof astilectron.callbacks[message.callbackId] === "undefined") {
+                    return
+                }
+                astilectron.callbacks[message.callbackId](message)
+                delete astilectron.callbacks[message.callbackId]
+            })
             document.dispatchEvent(new Event('astilectron-ready'))`
         )
         client.write(json.targetID, consts.eventNames.windowEventDidFinishLoad)
