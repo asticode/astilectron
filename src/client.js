@@ -1,26 +1,17 @@
 'use strict'
 
-const net = require('net');
-const url = require('url');
-
-// Client can read/write messages from a TCP server
+// Client can read/write messages to/from stdout/stdin
 class Client {
-    // init initializes the Client
-    init() {
-        var u = url.parse("tcp://" + process.argv[2], false, false)
-        this.socket = new net.Socket()
-        this.socket.connect(u.port, u.hostname, function() {});
-        this.socket.on('close', function() {
-            process.exit()
-        })
-        return this
+    // input returns the client input
+    input() {
+        return process.stdin
     }
 
-    // write writes an event to the server
+    // write writes an event to stdout
     write(targetID, eventName, payload) {
         var data = {name: eventName, targetID: targetID}
-        if (typeof payload != "undefined") Object.assign(data, payload)
-        this.socket.write(JSON.stringify(data) + "\n")
+        if (typeof payload !== "undefined") Object.assign(data, payload)
+        process.stdout.write(JSON.stringify(data) + "\n")
     }
 }
 

@@ -3,8 +3,8 @@
 const electron = require('electron')
 const {app, BrowserWindow, ipcMain, Menu, MenuItem, Tray} = electron
 const consts = require('./src/consts.js')
-const client = require('./src/client.js').init()
-const rl = require('readline').createInterface({input: client.socket})
+const client = require('./src/client.js')
+const rl = require('readline').createInterface({input: client.input()})
 
 let elements = {}
 let menus = {}
