@@ -6,7 +6,7 @@ module.exports = {
         displayEventAdded: "display.event.added",
         displayEventMetricsChanged: "display.event.metrics.changed",
         displayEventRemoved: "display.event.removed",
-        ipcWindowMessage: "ipc.window.message",
+        ipcCmdMessage: "ipc.cmd.message",
         menuCmdCreate: "menu.cmd.create",
         menuCmdDestroy: "menu.cmd.destroy",
         menuEventCreated: "menu.event.created",
