@@ -134,6 +134,9 @@ app.on('ready',() => {
             case consts.eventNames.windowCmdHide:
             elements[json.targetID].hide()
             break;
+            case consts.eventNames.windowCmdLog:
+            elements[json.targetID].webContents.send(consts.eventNames.ipcCmdLog, json.message)
+            break;
             case consts.eventNames.windowCmdMaximize:
             elements[json.targetID].maximize()
             break;
@@ -256,6 +259,9 @@ function windowCreate(json) {
         elements[json.targetID].webContents.executeJavaScript(
             `const {ipcRenderer} = require('electron')
             const {dialog} = require('electron').remote
+            ipcRenderer.on('`+ consts.eventNames.ipcCmdLog+`', function(event, message) {
+                console.log(message)
+            })
             var astilectron = {
                 listen: function(callback) {
                     ipcRenderer.on('`+ consts.eventNames.ipcCmdMessage +`', function(event, message) {
