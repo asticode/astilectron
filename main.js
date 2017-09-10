@@ -27,7 +27,7 @@ app.on('ready',() => {
     })
 
     // Listen on main ipcMain
-    ipcMain.on(consts.eventNames.ipcWindowMessage, (event, arg) => {
+    ipcMain.on(consts.eventNames.ipcCmdMessage, (event, arg) => {
         client.write(arg.targetID, consts.eventNames.windowEventMessage, {message: arg.message})
     })
 
@@ -138,7 +138,7 @@ app.on('ready',() => {
             elements[json.targetID].maximize()
             break;
             case consts.eventNames.windowCmdMessage:
-            elements[json.targetID].webContents.send(consts.eventNames.ipcWindowMessage, json.message)
+            elements[json.targetID].webContents.send(consts.eventNames.ipcCmdMessage, json.message)
             break;
             case consts.eventNames.windowCmdMinimize:
             elements[json.targetID].minimize()
@@ -258,7 +258,7 @@ function windowCreate(json) {
             const {dialog} = require('electron').remote
             var astilectron = {
                 listen: function(callback) {
-                    ipcRenderer.on('`+ consts.eventNames.ipcWindowMessage +`', function(event, message) {
+                    ipcRenderer.on('`+ consts.eventNames.ipcCmdMessage +`', function(event, message) {
                         callback(message)
                     })
                 },
@@ -269,7 +269,7 @@ function windowCreate(json) {
                         message.callbackId = astilectron.callbackIdCounter++
                         astilectron.callbacks[message.callbackId] = callback
                     }
-                    ipcRenderer.send('`+ consts.eventNames.ipcWindowMessage +`', {message: message, targetID: '`+ json.targetID +`'})
+                    ipcRenderer.send('`+ consts.eventNames.ipcCmdMessage +`', {message: message, targetID: '`+ json.targetID +`'})
                 },
                 showErrorBox: function(title, content) {
                     dialog.showErrorBox(title, content)
