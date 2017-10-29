@@ -216,15 +216,18 @@ function setMenu(rootId) {
     if (typeof menus[rootId] !== "undefined" && typeof elements[menus[rootId]] !== "undefined") {
         menu = elements[menus[rootId]]
     }
-    rootId == consts.mainTargetID ? Menu.setApplicationMenu(menu) : elements[rootId].setMenu(menu)
+    if (rootId === consts.mainTargetID) {
+        Menu.setApplicationMenu(menu)
+    } else if (elements[rootId].constructor === Tray) {
+        elements[rootId].setContextMenu(menu);
+    } else {
+        elements[rootId].setMenu(menu);
+    }
 }
 
 // trayCreate creates a tray
 function trayCreate(json) {
-    elements[json.targetID] = new Tray(json.trayOptions.image)
-    if (typeof json.menuId !== "undefined") {
-        elements[json.targetID].setContextMenu(elements[json.menuId]);
-    }
+    elements[json.targetID] = new Tray(json.trayOptions.image);
     if (typeof json.trayOptions.tooltip !== "undefined") {
         elements[json.targetID].setToolTip(json.trayOptions.tooltip);
     }
