@@ -8,6 +8,10 @@ const rl = require('readline').createInterface({input: client.socket})
 
 let elements = {}
 let menus = {}
+let quittingApp = false
+
+// App is quitting
+app.on('before-quit', () => quittingApp = true);
 
 // App is ready
 app.on('ready',() => {
@@ -243,6 +247,12 @@ function windowCreate(json) {
     elements[json.targetID].setMenu(null)
     elements[json.targetID].loadURL(json.url);
     elements[json.targetID].on('blur', () => { client.write(json.targetID, consts.eventNames.windowEventBlur) })
+    elements[json.targetID].on('close', (e) => {
+        if (json.windowOptions.minimizeOnClose && !quittingApp) {
+            e.preventDefault();
+            elements[json.targetID].minimize();
+        }
+    })
     elements[json.targetID].on('closed', () => {
         client.write(json.targetID, consts.eventNames.windowEventClosed)
         delete elements[json.targetID]
