@@ -42,6 +42,11 @@ app.on('ready',() => {
 
         // Switch on event name
         switch (json.name) {
+            // App
+            case consts.eventNames.appCmdQuit:
+            app.quit();
+            break;
+
             // Menu
             case consts.eventNames.menuCmdCreate:
             menuCreate(json.menu)
