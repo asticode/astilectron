@@ -1,7 +1,7 @@
 'use strict'
 
 const electron = require('electron')
-const {app, BrowserWindow, ipcMain, Menu, MenuItem, Tray} = electron
+const {app, BrowserWindow, ipcMain, Menu, MenuItem, Tray, dialog} = electron
 const consts = require('./src/consts.js')
 const client = require('./src/client.js').init()
 const rl = require('readline').createInterface({input: client.socket})
@@ -38,9 +38,10 @@ app.on('ready',() => {
     // Read from client
     rl.on('line', function(line){
         // Parse the JSON
-        var json = JSON.parse(line)
+        let json = JSON.parse(line)
 
         // Switch on event name
+        let window;
         switch (json.name) {
             // App
             case consts.eventNames.appCmdQuit:
@@ -56,7 +57,7 @@ app.on('ready',() => {
             break;
             case consts.eventNames.menuCmdDestroy:
             elements[json.targetID] = null
-            if (menus[json.menu.rootId] == json.targetID) {
+            if (menus[json.menu.rootId] === json.targetID) {
                 menus[json.menu.rootId] = null
                 setMenu(json.menu.rootId)
             }
@@ -88,7 +89,7 @@ app.on('ready',() => {
             client.write(json.targetID, consts.eventNames.subMenuEventAppended)
             break;
             case consts.eventNames.subMenuCmdClosePopup:
-            var window = null
+            window = null
             if (typeof json.windowId !== "undefined") {
                 window = elements[json.windowId]
             }
@@ -101,7 +102,7 @@ app.on('ready',() => {
             client.write(json.targetID, consts.eventNames.subMenuEventInserted)
             break;
             case consts.eventNames.subMenuCmdPopup:
-            var window = null
+            window = null
             if (typeof json.windowId !== "undefined") {
                 window = elements[json.windowId]
             }
@@ -187,7 +188,7 @@ app.on('ready',() => {
 function menuCreate(menu) {
     if (typeof menu !== "undefined") {
         elements[menu.id] = new Menu()
-        for(var i = 0; i < menu.items.length; i++) {
+        for(let i = 0; i < menu.items.length; i++) {
             elements[menu.id].append(menuItemCreate(menu.items[i]))
         }
         return elements[menu.id]
@@ -221,7 +222,7 @@ function menuItemToJSON(menuItem) {
 
 // setMenu sets a menu
 function setMenu(rootId) {
-    var menu = null
+    let menu = null
     if (typeof menus[rootId] !== "undefined" && typeof elements[menus[rootId]] !== "undefined") {
         menu = elements[menus[rootId]]
     }
@@ -253,6 +254,13 @@ function windowCreate(json) {
     elements[json.targetID].loadURL(json.url);
     elements[json.targetID].on('blur', () => { client.write(json.targetID, consts.eventNames.windowEventBlur) })
     elements[json.targetID].on('close', (e) => {
+        if (typeof json.windowOptions.messageBoxOnClose !== "undefined") {
+            let buttonId = dialog.showMessageBox(null, json.windowOptions.messageBoxOnClose)
+            if (typeof json.windowOptions.messageBoxOnClose.confirmId !== "undefined" && json.windowOptions.messageBoxOnClose.confirmId !== buttonId) {
+                e.preventDefault()
+                return
+            }
+        }
         if (json.windowOptions.minimizeOnClose && !quittingApp) {
             e.preventDefault();
             elements[json.targetID].minimize();
