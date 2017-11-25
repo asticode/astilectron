@@ -82,6 +82,13 @@ app.on('ready',() => {
             client.write(json.targetID, consts.eventNames.menuItemEventVisibleSet)
             break;
 
+            // Session
+            case consts.eventNames.sessionCmdClearCache:
+            elements[json.targetID].clearCache(function() {
+                client.write(json.targetID, consts.eventNames.sessionEventClearedCache)
+            })
+            break;
+
             // Sub menu
             case consts.eventNames.subMenuCmdAppend:
             elements[json.targetID].append(menuItemCreate(json.menuItem))
@@ -325,6 +332,12 @@ function windowCreate(json) {
             })
             document.dispatchEvent(new Event('astilectron-ready'))`
         )
+        sessionCreate(elements[json.targetID].webContents, json.sessionId)
         client.write(json.targetID, consts.eventNames.windowEventDidFinishLoad)
     })
+}
+
+function sessionCreate(webContents, sessionId) {
+    elements[sessionId] = webContents.session
+    elements[sessionId].on('will-download', () => { client.write(sessionId, consts.eventNames.sessionEventWillDownload) })
 }
