@@ -7,7 +7,7 @@ const url = require('url');
 class Client {
     // init initializes the Client
     init() {
-        var u = url.parse("tcp://" + process.argv[2], false, false)
+        let u = url.parse("tcp://" + process.argv[2], false, false)
         this.socket = new net.Socket()
         this.socket.connect(u.port, u.hostname, function() {});
         this.socket.on('close', function() {
@@ -18,8 +18,8 @@ class Client {
 
     // write writes an event to the server
     write(targetID, eventName, payload) {
-        var data = {name: eventName, targetID: targetID}
-        if (typeof payload != "undefined") Object.assign(data, payload)
+        let data = {name: eventName, targetID: targetID}
+        if (typeof payload !== "undefined") Object.assign(data, payload)
         this.socket.write(JSON.stringify(data) + "\n")
     }
 }

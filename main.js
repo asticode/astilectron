@@ -31,9 +31,16 @@ app.on('ready',() => {
     })
 
     // Listen on main ipcMain
-    ipcMain.on(consts.eventNames.ipcCmdMessage, (event, arg) => {
-        client.write(arg.targetID, consts.eventNames.windowEventMessage, {message: arg.message})
-    })
+    ipcMain.on(consts.eventNames.ipcEventMessage, (event, arg) => {
+        let payload = {message: arg.message};
+        if (typeof arg.callbackId !== "undefined") payload.callbackId = arg.callbackId;
+        client.write(arg.targetID, consts.eventNames.windowEventMessage, payload)
+    });
+    ipcMain.on(consts.eventNames.ipcEventMessageCallback, (event, arg) => {
+        let payload = {message: arg.message};
+        if (typeof arg.callbackId !== "undefined") payload.callbackId = arg.callbackId;
+        client.write(arg.targetID, consts.eventNames.windowEventMessageCallback, payload)
+    });
 
     // Read from client
     rl.on('line', function(line){
@@ -158,7 +165,10 @@ app.on('ready',() => {
             elements[json.targetID].maximize()
             break;
             case consts.eventNames.windowCmdMessage:
-            elements[json.targetID].webContents.send(consts.eventNames.ipcCmdMessage, json.message)
+            case consts.eventNames.windowCmdMessageCallback:
+            let m = {message: json.message}
+            if (typeof json.callbackId !== "undefined") m.callbackId = json.callbackId
+            elements[json.targetID].webContents.send(json.name === consts.eventNames.windowCmdMessageCallback ? consts.eventNames.ipcCmdMessageCallback : consts.eventNames.ipcCmdMessage, m)
             break;
             case consts.eventNames.windowCmdMinimize:
             elements[json.targetID].minimize()
@@ -295,20 +305,34 @@ function windowCreate(json) {
             ipcRenderer.on('`+ consts.eventNames.ipcCmdLog+`', function(event, message) {
                 console.log(message)
             })
+            var onMessageOnce = false;
             var astilectron = {
-                listen: function(callback) {
+                onMessage: function(callback) {
+                    if (onMessageOnce) {
+                        return
+                    }
                     ipcRenderer.on('`+ consts.eventNames.ipcCmdMessage +`', function(event, message) {
-                        callback(message)
+                        let v = callback(message.message)
+                        if (typeof message.callbackId !== "undefined") {
+                            let e = {callbackId: message.callbackId, targetID: '`+ json.targetID +`'}
+                            if (typeof v !== "undefined") e.message = v
+                            ipcRenderer.send('`+ consts.eventNames.ipcEventMessageCallback +`', e)
+                        }
                     })
+                    onMessageOnce = true
                 },
                 callbackIdCounter: 1,
-                callbacks: {},
-                send: function(message, callback) {
+                sendMessage: function(message, callback) {
+                    let e = {message: message, targetID: '`+ json.targetID +`'}
                     if (typeof callback !== "undefined") {
-                        message.callbackId = astilectron.callbackIdCounter++
-                        astilectron.callbacks[message.callbackId] = callback
+                        e.callbackId = String(astilectron.callbackIdCounter++)
+                        ipcRenderer.on('`+ consts.eventNames.ipcCmdMessageCallback +`', function(event, message) {
+                            if (message.callbackId === e.callbackId) {
+                                callback(message.message)
+                            }
+                        });
                     }
-                    ipcRenderer.send('`+ consts.eventNames.ipcCmdMessage +`', {message: message, targetID: '`+ json.targetID +`'})
+                    ipcRenderer.send('`+ consts.eventNames.ipcEventMessage +`', e)
                 },
                 showErrorBox: function(title, content) {
                     dialog.showErrorBox(title, content)
@@ -323,13 +347,6 @@ function windowCreate(json) {
                     dialog.showSaveDialog(null, options, callback)
                 }
             }
-            astilectron.listen(function(message) {
-                if (typeof message.callbackId === "undefined" || typeof astilectron.callbacks[message.callbackId] === "undefined") {
-                    return
-                }
-                astilectron.callbacks[message.callbackId](message)
-                delete astilectron.callbacks[message.callbackId]
-            })
             document.dispatchEvent(new Event('astilectron-ready'))`
         )
         sessionCreate(elements[json.targetID].webContents, json.sessionId)
