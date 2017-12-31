@@ -10,6 +10,18 @@ let elements = {}
 let menus = {}
 let quittingApp = false
 
+// Command line switches
+let idx = 3;
+for (let i = idx; i < process.argv.length; i++) {
+    let s = process.argv[i].replace(/^[\-]+/g,"");
+    let v;
+    if (typeof process.argv[i+1] !== "undefined" && !process.argv[i+1].startsWith("-")) {
+        v = process.argv[i+1];
+        i++;
+    }
+    app.commandLine.appendSwitch(s, v);
+}
+
 // App is quitting
 app.on('before-quit', () => quittingApp = true);
 
