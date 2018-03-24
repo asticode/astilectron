@@ -366,8 +366,12 @@ function windowCreate(json) {
     })
     elements[json.targetID].webContents.on('did-get-redirect-request', (event, oldUrl, newUrl) => {
         client.write(json.targetID, consts.eventNames.windowEventDidGetRedirectRequest, {
-            oldUrl,
-            newUrl
+            url: newUrl
+        })
+    })
+    elements[json.targetID].webContents.on('will-navigate', (event, url) => {
+        client.write(json.targetID, consts.eventNames.windowEventWillNavigate, {
+            url
         })
     })
 }
