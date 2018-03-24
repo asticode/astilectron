@@ -364,6 +364,9 @@ function windowCreate(json) {
         sessionCreate(elements[json.targetID].webContents, json.sessionId)
         client.write(json.targetID, consts.eventNames.windowEventDidFinishLoad)
     })
+    elements[json.targetID].webContents.on('did-get-redirect-request', () => {
+        client.write(json.targetID, consts.eventNames.windowEventDidGetRedirectRequest)
+    })
 }
 
 function sessionCreate(webContents, sessionId) {
