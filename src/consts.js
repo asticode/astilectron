@@ -65,6 +65,8 @@ module.exports = {
         windowEventBlur: "window.event.blur",
         windowEventClosed: "window.event.closed",
         windowEventDidFinishLoad: "window.event.did.finish.load",
+        windowEventDidGetRedirectRequest: "window.event.did.get.redirect.request",
+        windowEventWillNavigate: "window.event.will.navigate",
         windowEventFocus: "window.event.focus",
         windowEventHide: "window.event.hide",
         windowEventMaximize: "window.event.maximize",

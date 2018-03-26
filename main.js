@@ -364,6 +364,17 @@ function windowCreate(json) {
         sessionCreate(elements[json.targetID].webContents, json.sessionId)
         client.write(json.targetID, consts.eventNames.windowEventDidFinishLoad)
     })
+    elements[json.targetID].webContents.on('did-get-redirect-request', (event, oldUrl, newUrl) => {
+        client.write(json.targetID, consts.eventNames.windowEventDidGetRedirectRequest, {
+            newUrl: newUrl,
+            oldUrl: oldUrl
+        })
+    })
+    elements[json.targetID].webContents.on('will-navigate', (event, url) => {
+        client.write(json.targetID, consts.eventNames.windowEventWillNavigate, {
+            url: url
+        })
+    })
 }
 
 function sessionCreate(webContents, sessionId) {
