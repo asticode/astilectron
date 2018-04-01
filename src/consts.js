@@ -7,6 +7,20 @@ module.exports = {
         displayEventAdded: "display.event.added",
         displayEventMetricsChanged: "display.event.metrics.changed",
         displayEventRemoved: "display.event.removed",
+        dockCmdBounce: "dock.cmd.bounce",
+        dockCmdBounceDownloads: "dock.cmd.bounce.downloads",
+        dockCmdCancelBounce: "dock.cmd.cancel.bounce",
+        dockCmdHide: "dock.cmd.hide",
+        dockCmdSetBadge: "dock.cmd.set.badge",
+        dockCmdSetIcon: "dock.cmd.set.icon",
+        dockCmdShow: "dock.cmd.show",
+        dockEventBadgeSet: "dock.event.badge.set",
+        dockEventBouncing: "dock.event.bouncing",
+        dockEventBouncingCancelled: "dock.event.bouncing.cancelled",
+        dockEventDownloadsBouncing: "dock.event.download.bouncing",
+        dockEventHidden: "dock.event.hidden",
+        dockEventIconSet: "dock.event.icon.set",
+        dockEventShown: "dock.event.shown",
         ipcCmdLog: "ipc.cmd.log",
         ipcCmdMessage: "ipc.cmd.message",
         ipcCmdMessageCallback: "ipc.cmd.message.callback",
@@ -81,7 +95,10 @@ module.exports = {
         windowEventRestore: "window.event.restore",
         windowEventShow: "window.event.show",
         windowEventUnmaximize: "window.event.unmaximize",
-        windowEventUnresponsive: "window.event.unresponsive",
+        windowEventUnresponsive: "window.event.unresponsive"
     },
-    mainTargetID: 'main'
+    targetIds: {
+        app: 'app',
+        dock: 'dock'
+    }
 }
