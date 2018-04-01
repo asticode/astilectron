@@ -1,7 +1,7 @@
 'use strict'
 
 const electron = require('electron')
-const {app, BrowserWindow, ipcMain, Menu, MenuItem, Tray, dialog} = electron
+const {app, BrowserWindow, ipcMain, Menu, MenuItem, Tray, dialog, Notification} = electron
 const consts = require('./src/consts.js')
 const client = require('./src/client.js').init()
 const rl = require('readline').createInterface({input: client.socket})
@@ -146,6 +146,16 @@ app.on('ready',() => {
             client.write(json.targetID, consts.eventNames.menuItemEventVisibleSet)
             break;
 
+            // Notification
+            case consts.eventNames.notificationCmdCreate:
+            notificationCreate(json);
+            break;
+            case consts.eventNames.notificationCmdShow:
+            if (Notification.isSupported()) {
+                elements[json.targetID].show();
+            }
+            break;
+
             // Session
             case consts.eventNames.sessionCmdClearCache:
             elements[json.targetID].clearCache(function() {
@@ -263,6 +273,9 @@ app.on('ready',() => {
         displays: {
             all: screen.getAllDisplays(),
             primary: screen.getPrimaryDisplay()
+        },
+        supported: {
+            notification: Notification.isSupported()
         }
     })
 });
@@ -311,13 +324,26 @@ function setMenu(rootId) {
     }
     if (rootId === consts.targetIds.app) {
         Menu.setApplicationMenu(menu)
-    } else if (rootId === consts.targetIds.dock) {
+    } else if (rootId === consts.targetIds.dock && typeof app.dock !== "undefined") {
         app.dock.setMenu(menu)
     } else if (elements[rootId].constructor === Tray) {
         elements[rootId].setContextMenu(menu);
     } else {
         elements[rootId].setMenu(menu);
     }
+}
+
+// notificationCreate creates a notification
+function notificationCreate(json) {
+    if (Notification.isSupported()) {
+        elements[json.targetID] = new Notification(json.notificationOptions);
+        elements[json.targetID].on('action', (event, index) => { client.write(json.targetID, consts.eventNames.notificationEventActioned, {index: index}) })
+        elements[json.targetID].on('click', () => { client.write(json.targetID, consts.eventNames.notificationEventClicked) })
+        elements[json.targetID].on('close', () => { client.write(json.targetID, consts.eventNames.notificationEventClosed) })
+        elements[json.targetID].on('reply', (event, reply) => { client.write(json.targetID, consts.eventNames.notificationEventReplied, {reply: reply}) })
+        elements[json.targetID].on('show', () => { client.write(json.targetID, consts.eventNames.notificationEventShown) })
+    }
+    client.write(json.targetID, consts.eventNames.notificationEventCreated)
 }
 
 // trayCreate creates a tray
