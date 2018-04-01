@@ -33,13 +33,13 @@ app.on('ready',() => {
 
     // Listen to screen events
     screen.on('display-added', function() {
-        client.write(consts.mainTargetID, consts.eventNames.displayEventAdded, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
+        client.write(consts.targetIds.app, consts.eventNames.displayEventAdded, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
     })
     screen.on('display-metrics-changed', function() {
-        client.write(consts.mainTargetID, consts.eventNames.displayEventMetricsChanged, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
+        client.write(consts.targetIds.app, consts.eventNames.displayEventMetricsChanged, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
     })
     screen.on('display-removed', function() {
-        client.write(consts.mainTargetID, consts.eventNames.displayEventRemoved, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
+        client.write(consts.targetIds.app, consts.eventNames.displayEventRemoved, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
     })
 
     // Listen on main ipcMain
@@ -65,6 +65,51 @@ app.on('ready',() => {
             // App
             case consts.eventNames.appCmdQuit:
             app.quit();
+            break;
+
+            // Dock
+            case consts.eventNames.dockCmdBounce:
+            let id = 0;
+            if (typeof app.dock !== "undefined") {
+                id = app.dock.bounce(json.bounceType);
+            }
+            client.write(consts.targetIds.dock, consts.eventNames.dockEventBouncing, {id: id});
+            break;
+            case consts.eventNames.dockCmdBounceDownloads:
+            if (typeof app.dock !== "undefined") {
+                app.dock.downloadFinished(json.filePath);
+            }
+            client.write(consts.targetIds.dock, consts.eventNames.dockEventDownloadsBouncing);
+            break;
+            case consts.eventNames.dockCmdCancelBounce:
+            if (typeof app.dock !== "undefined") {
+                app.dock.cancelBounce(json.id);
+            }
+            client.write(consts.targetIds.dock, consts.eventNames.dockEventBouncingCancelled);
+            break;
+            case consts.eventNames.dockCmdHide:
+            if (typeof app.dock !== "undefined") {
+                app.dock.hide();
+            }
+            client.write(consts.targetIds.dock, consts.eventNames.dockEventHidden);
+            break;
+            case consts.eventNames.dockCmdSetBadge:
+            if (typeof app.dock !== "undefined") {
+                app.dock.setBadge(json.badge);
+            }
+            client.write(consts.targetIds.dock, consts.eventNames.dockEventBadgeSet);
+            break;
+            case consts.eventNames.dockCmdSetIcon:
+            if (typeof app.dock !== "undefined") {
+                app.dock.setIcon(json.image);
+            }
+            client.write(consts.targetIds.dock, consts.eventNames.dockEventIconSet);
+            break;
+            case consts.eventNames.dockCmdShow:
+            if (typeof app.dock !== "undefined") {
+                app.dock.show();
+            }
+            client.write(consts.targetIds.dock, consts.eventNames.dockEventShown);
             break;
 
             // Menu
@@ -211,11 +256,16 @@ app.on('ready',() => {
             elements[json.targetID].unmaximize()
             break;
         }
-    })
+    });
 
     // Send electron.ready event
-    client.write(consts.mainTargetID, consts.eventNames.appEventReady, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
-})
+    client.write(consts.targetIds.app, consts.eventNames.appEventReady, {
+        displays: {
+            all: screen.getAllDisplays(),
+            primary: screen.getPrimaryDisplay()
+        }
+    })
+});
 
 // menuCreate creates a new menu
 function menuCreate(menu) {
@@ -259,8 +309,10 @@ function setMenu(rootId) {
     if (typeof menus[rootId] !== "undefined" && typeof elements[menus[rootId]] !== "undefined") {
         menu = elements[menus[rootId]]
     }
-    if (rootId === consts.mainTargetID) {
+    if (rootId === consts.targetIds.app) {
         Menu.setApplicationMenu(menu)
+    } else if (rootId === consts.targetIds.dock) {
+        app.dock.setMenu(menu)
     } else if (elements[rootId].constructor === Tray) {
         elements[rootId].setContextMenu(menu);
     } else {
