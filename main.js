@@ -146,6 +146,10 @@ app.on('ready',() => {
             elements[json.targetID] = null
             client.write(json.targetID, consts.eventNames.trayEventDestroyed)
             break;
+            case consts.eventNames.trayCmdSetImage:
+            elements[json.targetID].setImage(json.image);
+            client.write(json.targetID, consts.eventNames.trayEventImageSet)
+            break;
 
             // Window
             case consts.eventNames.windowCmdBlur:
