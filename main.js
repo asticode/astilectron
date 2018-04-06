@@ -352,9 +352,9 @@ function trayCreate(json) {
     if (typeof json.trayOptions.tooltip !== "undefined") {
         elements[json.targetID].setToolTip(json.trayOptions.tooltip);
     }
-    elements[json.targetID].on('click', () => { client.write(json.targetID, consts.eventNames.trayEventClicked) })
-    elements[json.targetID].on('double-click', () => { client.write(json.targetID, consts.eventNames.trayEventDoubleClicked) })
-    elements[json.targetID].on('right-click', () => { client.write(json.targetID, consts.eventNames.trayEventRightClicked) })
+    elements[json.targetID].on('click', (index, event) => { client.write(json.targetID, consts.eventNames.trayEventClicked, {"bounds":{x:event.x, y:event.y,width:event.width,height:event.height}})})
+    elements[json.targetID].on('double-click', (index, event) => { client.write(json.targetID, consts.eventNames.trayEventDoubleClicked, {"bounds":{x:event.x, y:event.y,width:event.width,height:event.height}})})
+    elements[json.targetID].on('right-click', (index, event) => { client.write(json.targetID, consts.eventNames.trayEventRightClicked, {"bounds":{x:event.x, y:event.y,width:event.width,height:event.height}})})
     client.write(json.targetID, consts.eventNames.trayEventCreated)
 }
 
