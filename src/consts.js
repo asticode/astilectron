@@ -2,7 +2,8 @@
 
 module.exports = {
     callbackNames: {
-        webContentsLogin: "web.contents.login"
+        webContentsLogin: "web.contents.login",
+        webContentsMessage: "web.contents.message",
     },
     eventNames: {
         appCmdQuit: "app.cmd.quit",

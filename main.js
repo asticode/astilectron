@@ -403,13 +403,10 @@ function windowCreate(json) {
         elements[json.targetID].webContents.executeJavaScript(
             `const {ipcRenderer} = require('electron')
             const {dialog} = require('electron').remote
-            ipcRenderer.on('`+ consts.eventNames.ipcCmdLog+`', function(event, message) {
-                console.log(message)
-            })
-            var onMessageOnce = false;
             var astilectron = {
+                onMessageOnce: false,
                 onMessage: function(callback) {
-                    if (onMessageOnce) {
+                    if (astilectron.onMessageOnce) {
                         return
                     }
                     ipcRenderer.on('`+ consts.eventNames.ipcCmdMessage +`', function(event, message) {
@@ -420,20 +417,29 @@ function windowCreate(json) {
                             ipcRenderer.send('`+ consts.eventNames.ipcEventMessageCallback +`', e)
                         }
                     })
-                    onMessageOnce = true
+                    astilectron.onMessageOnce = true
                 },
-                callbackIdCounter: 1,
-                sendMessage: function(message, callback) {
-                    let e = {message: message, targetID: '`+ json.targetID +`'}
-                    if (typeof callback !== "undefined") {
-                        e.callbackId = String(astilectron.callbackIdCounter++)
-                        ipcRenderer.on('`+ consts.eventNames.ipcCmdMessageCallback +`', function(event, message) {
-                            if (message.callbackId === e.callbackId) {
-                                callback(message.message)
-                            }
-                        });
+                callbacks: {},
+                counters: {},
+                registerCallback: function(k, e, c, n) {
+                    e.targetID = '`+ json.targetID +`';
+                    if (typeof astilectron.counters[k] === "undefined") {
+                        astilectron.counters[k] = 1;
                     }
-                    ipcRenderer.send('`+ consts.eventNames.ipcEventMessage +`', e)
+                    e.callbackId = String(astilectron.counters[k]++);
+                    if (typeof astilectron.callbacks[k] === "undefined") {
+                        astilectron.callbacks[k] = {};
+                    }
+                    astilectron.callbacks[k][e.callbackId] = c;
+                    ipcRenderer.send(n, e);
+                },
+                executeCallback: function(k, message, args) {
+                    if (typeof astilectron.callbacks[k][message.callbackId] !== "undefined") {
+                        astilectron.callbacks[k][message.callbackId].apply(null, args);
+                    }
+                },
+                sendMessage: function(message, callback) {
+                    astilectron.registerCallback('` + consts.callbackNames.webContentsMessage + `', {message: message}, callback, '`+ consts.eventNames.ipcEventMessage +`');
                 },
                 showErrorBox: function(title, content) {
                     dialog.showErrorBox(title, content)
@@ -447,7 +453,13 @@ function windowCreate(json) {
                 showSaveDialog: function(options, callback) {
                     dialog.showSaveDialog(null, options, callback)
                 }
-            }
+            };
+            ipcRenderer.on('`+ consts.eventNames.ipcCmdMessageCallback +`', function(event, message) {
+                astilectron.executeCallback('` + consts.callbackNames.webContentsMessage + `', message, [message.message]);
+            });
+            ipcRenderer.on('`+ consts.eventNames.ipcCmdLog+`', function(event, message) {
+                console.log(message)
+            })
             document.dispatchEvent(new Event('astilectron-ready'))`
         )
         sessionCreate(elements[json.targetID].webContents, json.sessionId)
