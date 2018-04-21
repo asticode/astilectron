@@ -6,9 +6,11 @@ const consts = require('./src/consts.js')
 const client = require('./src/client.js').init()
 const rl = require('readline').createInterface({input: client.socket})
 
-let elements = {}
-let menus = {}
-let quittingApp = false
+let callbacks = {};
+let counters = {};
+let elements = {};
+let menus = {};
+let quittingApp = false;
 
 // Command line switches
 let idx = 3;
@@ -204,6 +206,11 @@ app.on('ready',() => {
             case consts.eventNames.trayCmdSetImage:
             elements[json.targetID].setImage(json.image);
             client.write(json.targetID, consts.eventNames.trayEventImageSet)
+            break;
+
+            // Web contents
+            case consts.eventNames.webContentsEventLoginCallback:
+            executeCallback(consts.callbackNames.webContentsLogin, json, [json.username, json.password]);
             break;
 
             // Window
@@ -452,11 +459,33 @@ function windowCreate(json) {
             oldUrl: oldUrl
         })
     })
+    elements[json.targetID].webContents.on('login', (event, request, authInfo, callback) => {
+        event.preventDefault();
+        registerCallback(json, consts.callbackNames.webContentsLogin, {authInfo: authInfo, request: request}, consts.eventNames.webContentsEventLogin, callback);
+    })
     elements[json.targetID].webContents.on('will-navigate', (event, url) => {
         client.write(json.targetID, consts.eventNames.windowEventWillNavigate, {
             url: url
         })
     })
+}
+
+function registerCallback(json, k, e, n, c) {
+    if (typeof counters[k] === "undefined") {
+        counters[k] = 1;
+    }
+    e.callbackId = String(counters[k]++);
+    if (typeof callbacks[k] === "undefined") {
+        callbacks[k] = {};
+    }
+    callbacks[k][e.callbackId] = c;
+    client.write(json.targetID, n, e);
+}
+
+function executeCallback(k, json, args) {
+    if (typeof callbacks[k][json.callbackId] !== "undefined") {
+        callbacks[k][json.callbackId].apply(null, args);
+    }
 }
 
 function sessionCreate(webContents, sessionId) {
