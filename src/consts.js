@@ -1,6 +1,9 @@
 'use strict'
 
 module.exports = {
+    callbackNames: {
+        webContentsLogin: "web.contents.login"
+    },
     eventNames: {
         appCmdQuit: "app.cmd.quit",
         appEventReady: "app.event.ready",
@@ -67,6 +70,8 @@ module.exports = {
         trayEventDoubleClicked: "tray.event.double.clicked",
         trayEventImageSet: "tray.event.image.set",
         trayEventRightClicked: "tray.event.right.clicked",
+        webContentsEventLogin: "web.contents.event.login",
+        webContentsEventLoginCallback: "web.contents.event.login.callback",
         windowCmdBlur: "window.cmd.blur",
         windowCmdCenter: "window.cmd.center",
         windowCmdClose: "window.cmd.close",
