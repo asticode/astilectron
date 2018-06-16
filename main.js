@@ -379,9 +379,14 @@ function windowCreate(json) {
                 return
             }
         }
-        if (json.windowOptions.minimizeOnClose && !quittingApp) {
-            e.preventDefault();
-            elements[json.targetID].minimize();
+        if (!quittingApp) {
+            if (json.windowOptions.minimizeOnClose) {
+                e.preventDefault();
+                elements[json.targetID].minimize();
+            } else if (json.windowOptions.hideOnClose) {
+                e.preventDefault();
+                elements[json.targetID].hide();
+            }
         }
     })
     elements[json.targetID].on('closed', () => {
