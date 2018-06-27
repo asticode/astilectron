@@ -411,6 +411,9 @@ function windowCreate(json) {
         }, 3000)
     })
     elements[json.targetID].webContents.on('did-finish-load', () => {
+        if (reload !== null) {
+            clearInterval(reload);
+        }
         elements[json.targetID].webContents.executeJavaScript(
             `const {ipcRenderer} = require('electron')
             const {dialog} = require('electron').remote
