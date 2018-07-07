@@ -428,14 +428,16 @@ function windowCreate(json) {
                 counters: {},
                 registerCallback: function(k, e, c, n) {
                     e.targetID = '`+ json.targetID +`';
-                    if (typeof astilectron.counters[k] === "undefined") {
-                        astilectron.counters[k] = 1;
+                    if (typeof c !== "undefined") {
+                        if (typeof astilectron.counters[k] === "undefined") {
+                            astilectron.counters[k] = 1;
+                        }
+                        e.callbackId = String(astilectron.counters[k]++);
+                        if (typeof astilectron.callbacks[k] === "undefined") {
+                            astilectron.callbacks[k] = {};
+                        }
+                        astilectron.callbacks[k][e.callbackId] = c;
                     }
-                    e.callbackId = String(astilectron.counters[k]++);
-                    if (typeof astilectron.callbacks[k] === "undefined") {
-                        astilectron.callbacks[k] = {};
-                    }
-                    astilectron.callbacks[k][e.callbackId] = c;
                     ipcRenderer.send(n, e);
                 },
                 executeCallback: function(k, message, args) {
