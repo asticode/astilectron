@@ -368,6 +368,17 @@ function trayCreate(json) {
 // windowCreate creates a new window
 function windowCreate(json) {
     elements[json.targetID] = new BrowserWindow(json.windowOptions)
+    if (typeof json.windowOptions.proxy !== "undefined") {
+        elements[json.targetID].webContents.session.setProxy(json.windowOptions.proxy, function() {
+            windowCreateFinish(json)
+        })
+    } else {
+        windowCreateFinish(json)
+    }
+}
+
+// windowCreateFinish finishes creating a new window
+function windowCreateFinish(json) {
     elements[json.targetID].setMenu(null)
     elements[json.targetID].loadURL(json.url, (typeof json.windowOptions.load !== "undefined" ? json.windowOptions.load :  {}));
     elements[json.targetID].on('blur', () => { client.write(json.targetID, consts.eventNames.windowEventBlur) })
