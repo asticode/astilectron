@@ -466,7 +466,8 @@ function windowCreate(json) {
             });
             ipcRenderer.on('`+ consts.eventNames.ipcCmdLog+`', function(event, message) {
                 console.log(message)
-            })
+            });
+            ` + (typeof json.windowOptions.script !== "undefined" ? json.windowOptions.script : "") + `
             document.dispatchEvent(new Event('astilectron-ready'))`
         )
         sessionCreate(elements[json.targetID].webContents, json.sessionId)
