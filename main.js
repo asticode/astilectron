@@ -14,7 +14,8 @@ let quittingApp = false;
 
 var myWindow = null;
 
-if (process.argv[2] == "true") {
+// parsing for the option of SingleInstance "true" or null
+if (process.argv[3] === "true") {
   var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
     // Someone tried to run a second instance, we should focus our window.
     if (myWindow) {
@@ -518,6 +519,7 @@ function windowCreateFinish(json) {
             url: url
         })
     })
+    myWindow = elements[json.targetID]
 }
 
 function registerCallback(json, k, e, n, c) {
