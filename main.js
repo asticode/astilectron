@@ -12,8 +12,25 @@ let elements = {};
 let menus = {};
 let quittingApp = false;
 
+var myWindow = null;
+
+// parsing for the option of SingleInstance "true" or null
+if (process.argv[3] === "true") {
+  var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
+    // Someone tried to run a second instance, we should focus our window.
+    if (myWindow) {
+      if (myWindow.isMinimized()) myWindow.restore();
+      myWindow.focus();
+    }
+  });
+
+  if (shouldQuit) {
+    app.quit();
+  }
+}
+
 // Command line switches
-let idx = 3;
+let idx = 4;
 for (let i = idx; i < process.argv.length; i++) {
     let s = process.argv[i].replace(/^[\-]+/g,"");
     let v;
@@ -501,6 +518,7 @@ function windowCreateFinish(json) {
             url: url
         })
     })
+    myWindow = elements[json.targetID]
 }
 
 function registerCallback(json, k, e, n, c) {
