@@ -519,11 +519,7 @@ function windowCreateFinish(json) {
             url: url
         })
     })
-<<<<<<< HEAD
-    myWindow = elements[json.targetID];
-=======
     myWindow = elements[json.targetID]
->>>>>>> master
 }
 
 function registerCallback(json, k, e, n, c) {
