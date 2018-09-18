@@ -26,6 +26,7 @@ if (process.argv[3] === "true") {
 
   if (shouldQuit) {
     app.quit();
+    return;
   }
 }
 
