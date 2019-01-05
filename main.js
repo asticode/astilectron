@@ -15,18 +15,20 @@ let quittingApp = false;
 // Single instance
 let lastWindow = null;
 if (process.argv[3] === "true") {
-    let shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
-    // Someone tried to run a second instance, we should focus our window.
-    if (lastWindow) {
-      if (lastWindow.isMinimized()) lastWindow.restore();
-        lastWindow.focus();
+    // Lock
+    const singlesInstanceLock = app.requestSingleInstanceLock();
+    if (!singlesInstanceLock) {
+        app.quit();
+        return;
     }
-  });
 
-  if (shouldQuit) {
-    app.quit();
-    return;
-  }
+    // Someone tried to run a second instance, we should focus our window.
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+        if (lastWindow) {
+            if (lastWindow.isMinimized()) lastWindow.restore();
+            lastWindow.focus();
+        }
+    });
 }
 
 // Command line switches
