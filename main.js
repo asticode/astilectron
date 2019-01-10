@@ -11,6 +11,7 @@ let counters = {};
 let elements = {};
 let menus = {};
 let quittingApp = false;
+let reload = null;
 
 // Single instance
 let lastWindow = null;
@@ -436,7 +437,15 @@ function windowCreateFinish(json) {
     elements[json.targetID].on('show', () => { client.write(json.targetID, consts.eventNames.windowEventShow) })
     elements[json.targetID].on('unmaximize', () => { client.write(json.targetID, consts.eventNames.windowEventUnmaximize) })
     elements[json.targetID].on('unresponsive', () => { client.write(json.targetID, consts.eventNames.windowEventUnresponsive) })
+    elements[json.targetID].webContents.on('did-fail-load', () => {
+        reload = setInterval(() => {
+            elements[json.targetID].reload();
+        }, 3000)
+    })
     elements[json.targetID].webContents.on('did-finish-load', () => {
+        if (reload !== null) {
+            clearInterval(reload);
+        }
         elements[json.targetID].webContents.executeJavaScript(
             `const {ipcRenderer} = require('electron')
             const {dialog} = require('electron').remote
