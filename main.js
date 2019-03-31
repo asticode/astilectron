@@ -26,6 +26,7 @@ if (process.argv[3] === "true") {
     app.on('second-instance', (event, commandLine, workingDirectory) => {
         if (lastWindow) {
             if (lastWindow.isMinimized()) lastWindow.restore();
+            lastWindow.show();
             lastWindow.focus();
         }
     });
