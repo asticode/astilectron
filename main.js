@@ -27,7 +27,6 @@ if (process.argv[3] === "true") {
         if (lastWindow) {
             if (lastWindow.isMinimized()) lastWindow.restore();
             lastWindow.show();
-            lastWindow.focus();
         }
     });
 }
