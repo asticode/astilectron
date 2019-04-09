@@ -520,6 +520,15 @@ function windowCreateFinish(json) {
             url: url
         })
     })
+    elements[json.targetID].setThumbarButtons([]);
+    elements[json.targetID].setAppDetails({
+        appId: json.windowOptions.appDetails.appId,
+        appIconPath: json.windowOptions.appDetails.appIconPath,
+        relaunchCommand: json.windowOptions.appDetails.relaunchCommand,
+        relaunchDisplayName: json.windowOptions.appDetails.relaunchDisplayName,
+        appIconIndex: json.windowOptions.appDetails.appIconIndex
+    })
+
     lastWindow = elements[json.targetID]
 }
 
