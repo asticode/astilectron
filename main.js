@@ -520,15 +520,9 @@ function windowCreateFinish(json) {
             url: url
         })
     })
-    if (typeof json.windowOptions.appDetails !== "undefined"){
+    if (typeof json.windowOptions.appDetails !== "undefined" && process.platform === "win32"){
         elements[json.targetID].setThumbarButtons([]);
-        elements[json.targetID].setAppDetails({
-            appId: json.windowOptions.appDetails.appId,
-            appIconPath: json.windowOptions.appDetails.appIconPath,
-            relaunchCommand: json.windowOptions.appDetails.relaunchCommand,
-            relaunchDisplayName: json.windowOptions.appDetails.relaunchDisplayName,
-            appIconIndex: json.windowOptions.appDetails.appIconIndex
-        });
+        elements[json.targetID].setAppDetails(json.windowOptions.appDetails);
     }
 
     lastWindow = elements[json.targetID]
