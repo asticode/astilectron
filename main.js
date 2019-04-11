@@ -276,6 +276,9 @@ app.on('ready',() => {
             case consts.eventNames.windowCmdResize:
             elements[json.targetID].setSize(json.windowOptions.width, json.windowOptions.height, true)
             break;
+            case consts.eventNames.windowCmdSetBounds:
+            elements[json.targetID].setBounds(json.bounds, true);
+            break;
             case consts.eventNames.windowCmdRestore:
             elements[json.targetID].restore()
             break;
