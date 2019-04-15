@@ -87,7 +87,7 @@ module.exports = {
         windowCmdMinimize: "window.cmd.minimize",
         windowCmdMove: "window.cmd.move",
         windowCmdResize: "window.cmd.resize",
-        windowCmdSetBounds: "window.cmd.setbounds",
+        windowCmdSetBounds: "window.cmd.set.bounds",
         windowCmdRestore: "window.cmd.restore",
         windowCmdShow: "window.cmd.show",
         windowCmdUnmaximize: "window.cmd.unmaximize",
