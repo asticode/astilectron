@@ -1,7 +1,8 @@
 'use strict'
 
 const electron = require('electron')
-const {app, BrowserWindow, ipcMain, Menu, MenuItem, Tray, dialog, Notification} = electron
+const path = require('path')
+const {app, BrowserWindow, ipcMain, Menu, MenuItem, Tray, dialog, Notification, protocol} = electron
 const consts = require('./src/consts.js')
 const client = require('./src/client.js').init()
 const rl = require('readline').createInterface({input: client.socket})
@@ -231,6 +232,12 @@ app.on('ready',() => {
             case consts.eventNames.webContentsEventLoginCallback:
             executeCallback(consts.callbackNames.webContentsLogin, json, [json.username, json.password]);
             break;
+
+            // Protocol
+            case consts.eventNames.protocolCmdRegisterAppProtocol:
+            registerAppProtocol(client, json)
+            break;
+
 
             // Window
             case consts.eventNames.windowCmdBlur:
@@ -552,4 +559,34 @@ function executeCallback(k, json, args) {
 function sessionCreate(webContents, sessionId) {
     elements[sessionId] = webContents.session
     elements[sessionId].on('will-download', () => { client.write(sessionId, consts.eventNames.sessionEventWillDownload) })
+}
+
+function registerAppProtocol(client, json) {
+
+    protocol.registerFileProtocol('app', (request, callback) => {
+
+        // string after "app:///""
+        const url = request.url.substr(7)
+        const finalPath = path.normalize(`${json.filePath}/${url}`)
+
+        client.write(
+            consts.targetIds.app,
+            consts.eventNames.registerAppProtocolCallback,
+            { finalPath: finalPath }
+        );
+
+        callback({ path: finalPath })
+
+    }, (error) => {
+
+        client.write(
+            consts.targetIds.app,
+            consts.eventNames.registerAppProtocolCompletion,
+            {
+                error: (error) ? error.message : '',
+                workingDir: json.filePath
+            }
+        );
+        //if (error) console.error('Failed to register app:// protocol')
+    });
 }
