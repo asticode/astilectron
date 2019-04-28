@@ -565,17 +565,26 @@ function registerAppProtocol(client, json) {
 
     protocol.registerFileProtocol('app', (request, callback) => {
 
+        // get value before "#" - for some reason electron cant
+        // find the file if hash value is passed as part of the path.
+        const parts = request.url.split('#');
+
         // string after "app:///""
-        const url = request.url.substr(7)
-        const finalPath = path.normalize(`${json.filePath}/${url}`)
+        const url = parts[0].substr(7);
+
+        const finalPath = path.normalize(`${json.filePath}/${url}`);
+
+        const navinfo = {
+            path: finalPath
+        };
 
         client.write(
             consts.targetIds.app,
             consts.eventNames.registerAppProtocolCallback,
-            { finalPath: finalPath }
+            navinfo 
         );
 
-        callback({ path: finalPath })
+        callback(navinfo);
 
     }, (error) => {
 
@@ -587,6 +596,5 @@ function registerAppProtocol(client, json) {
                 workingDir: json.filePath
             }
         );
-        //if (error) console.error('Failed to register app:// protocol')
     });
 }
