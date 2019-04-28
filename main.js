@@ -5,6 +5,7 @@ const {app, BrowserWindow, ipcMain, Menu, MenuItem, Tray, dialog, Notification} 
 const consts = require('./src/consts.js')
 const client = require('./src/client.js').init()
 const rl = require('readline').createInterface({input: client.socket})
+const path = require('path')
 
 let callbacks = {};
 let counters = {};
@@ -42,6 +43,9 @@ for (let i = idx; i < process.argv.length; i++) {
     }
     app.commandLine.appendSwitch(s, v);
 }
+
+// App Cache Path
+app.setPath('userData', path.join(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + 'Library/Preferences' : process.env.HOME + "/.local/share"), process.argv[4] || "astilectron"));
 
 // App is quitting
 app.on('before-quit', () => quittingApp = true);
