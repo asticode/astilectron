@@ -7,6 +7,8 @@ module.exports = {
     },
     eventNames: {
         appCmdQuit: "app.cmd.quit",
+        appCmdGetPath: "app.cmd.get.path",
+        appEventGetPathResult: "app.event.get.path.result",
         appEventReady: "app.event.ready",
         displayEventAdded: "display.event.added",
         displayEventMetricsChanged: "display.event.metrics.changed",

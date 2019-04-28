@@ -87,6 +87,15 @@ app.on('ready',() => {
             // App
             case consts.eventNames.appCmdQuit:
             app.quit();
+
+            case consts.eventNames.appCmdGetPath:
+            client.write(
+                consts.targetIds.app,
+                consts.eventNames.appEventGetPathResult,
+                {
+                    pathName: (json.pathName) ? app.getPath(json.pathName) : ''
+                }
+            );
             break;
 
             // Dock
