@@ -574,9 +574,9 @@ function registerAppProtocol(client, json) {
 
     protocol.registerFileProtocol('app', (request, callback) => {
 
-        // get value before "#" - for some reason electron cant
-        // find the file if hash value is passed as part of the path.
-        const parts = request.url.split('#');
+        // get value before "?" - for some reason electron cant
+        // find the file if ?search value is passed as part of the path.
+        const parts = request.url.split('?');
 
         // string after "app:///""
         const url = parts[0].substr(7);
