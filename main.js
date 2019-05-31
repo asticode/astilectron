@@ -1,7 +1,8 @@
 'use strict'
 
 const electron = require('electron')
-const {app, BrowserWindow, ipcMain, Menu, MenuItem, Tray, dialog, Notification} = electron
+const path = require('path')
+const {app, BrowserWindow, ipcMain, Menu, MenuItem, Tray, dialog, Notification, protocol} = electron
 const consts = require('./src/consts.js')
 const client = require('./src/client.js').init()
 const rl = require('readline').createInterface({input: client.socket})
@@ -86,6 +87,15 @@ app.on('ready',() => {
             // App
             case consts.eventNames.appCmdQuit:
             app.quit();
+
+            case consts.eventNames.appCmdGetPath:
+            client.write(
+                consts.targetIds.app,
+                consts.eventNames.appEventGetPathResult,
+                {
+                    pathName: (json.pathName) ? app.getPath(json.pathName) : ''
+                }
+            );
             break;
 
             // Dock
@@ -232,6 +242,12 @@ app.on('ready',() => {
             executeCallback(consts.callbackNames.webContentsLogin, json, [json.username, json.password]);
             break;
 
+            // Protocol
+            case consts.eventNames.protocolCmdRegisterAppProtocol:
+            registerAppProtocol(client, json)
+            break;
+
+
             // Window
             case consts.eventNames.windowCmdBlur:
             elements[json.targetID].blur()
@@ -307,6 +323,11 @@ app.on('ready',() => {
             notification: Notification.isSupported()
         }
     })
+});
+
+app.on('open-url', function (event, url) {
+  event.preventDefault();
+  console.log('open-url event: ', url);
 });
 
 // menuCreate creates a new menu
@@ -552,4 +573,52 @@ function executeCallback(k, json, args) {
 function sessionCreate(webContents, sessionId) {
     elements[sessionId] = webContents.session
     elements[sessionId].on('will-download', () => { client.write(sessionId, consts.eventNames.sessionEventWillDownload) })
+}
+
+function registerAppProtocol(client, json) {
+
+    const scheme = 'com.logtransformer.app';
+
+    console.log('Registering app protocol "' + scheme +'"...');
+
+    const ret = app.setAsDefaultProtocolClient(scheme);
+    console.log('setAsDefaultProtocolClient() returned:: ', JSON.stringify(ret));
+
+    protocol.registerFileProtocol(scheme, (request, callback) => {
+        console.log('Received request to ' + scheme + ':: ', request.url);
+
+        // get value before "?" - for some reason electron cant
+        // find the file if ?search value is passed as part of the path.
+        const parts = request.url.split('?');
+
+        // string after "<scheme>:///""
+        // - 1 to account for 0-index
+        // + 3 to account for "://"
+        const url = parts[0].substr((scheme.length - 1) + 3);
+
+        const finalPath = path.normalize(`${json.filePath}/${url}`);
+
+        const navinfo = {
+            path: finalPath
+        };
+
+        client.write(
+            consts.targetIds.app,
+            consts.eventNames.registerAppProtocolCallback,
+            navinfo 
+        );
+
+        callback(navinfo);
+
+    }, (error) => {
+
+        client.write(
+            consts.targetIds.app,
+            consts.eventNames.registerAppProtocolCompletion,
+            {
+                error: (error) ? error.message : '',
+                workingDir: json.filePath
+            }
+        );
+    });
 }

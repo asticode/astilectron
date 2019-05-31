@@ -7,6 +7,8 @@ module.exports = {
     },
     eventNames: {
         appCmdQuit: "app.cmd.quit",
+        appCmdGetPath: "app.cmd.get.path",
+        appEventGetPathResult: "app.event.get.path.result",
         appEventReady: "app.event.ready",
         displayEventAdded: "display.event.added",
         displayEventMetricsChanged: "display.event.metrics.changed",
@@ -51,6 +53,9 @@ module.exports = {
         notificationEventCreated: "notification.event.created",
         notificationEventReplied: "notification.event.replied",
         notificationEventShown: "notification.event.shown",
+        protocolCmdRegisterAppProtocol: "protocol.cmd.register.app",
+        registerAppProtocolCallback: 'protocol.register.callback',
+        registerAppProtocolCompletion: 'protocol.event.register.completion',
         sessionCmdClearCache: "session.cmd.clear.cache",
         sessionEventClearedCache: "session.event.cleared.cache",
         sessionEventWillDownload: "session.event.will.download",
