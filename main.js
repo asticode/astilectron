@@ -325,6 +325,11 @@ app.on('ready',() => {
     })
 });
 
+app.on('open-url', function (event, url) {
+  event.preventDefault();
+  console.log('open-url event: ', url);
+});
+
 // menuCreate creates a new menu
 function menuCreate(menu) {
     if (typeof menu !== "undefined") {
@@ -572,14 +577,24 @@ function sessionCreate(webContents, sessionId) {
 
 function registerAppProtocol(client, json) {
 
-    protocol.registerFileProtocol('app', (request, callback) => {
+    const scheme = 'com.logtransformer.app';
+
+    console.log('Registering app protocol "' + scheme +'"...');
+
+    const ret = app.setAsDefaultProtocolClient(scheme);
+    console.log('setAsDefaultProtocolClient() returned:: ', JSON.stringify(ret));
+
+    protocol.registerFileProtocol(scheme, (request, callback) => {
+        console.log('Received request to ' + scheme + ':: ', request.url);
 
         // get value before "?" - for some reason electron cant
         // find the file if ?search value is passed as part of the path.
         const parts = request.url.split('?');
 
-        // string after "app:///""
-        const url = parts[0].substr(7);
+        // string after "<scheme>:///""
+        // - 1 to account for 0-index
+        // + 3 to account for "://"
+        const url = parts[0].substr((scheme.length - 1) + 3);
 
         const finalPath = path.normalize(`${json.filePath}/${url}`);
 
