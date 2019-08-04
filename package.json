@@ -1,5 +1,5 @@
 {
-  "name": "Astilectron",
+  "name": "astilectron",
   "description": "Electron-based cross-language application framework",
   "version": "1.0.0",
   "devDependencies": {
