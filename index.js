@@ -18,7 +18,10 @@ let quittingApp = false;
 let lastWindow = null;
 
 // App is quitting
-const beforeQuit = () => quittingApp = true;
+const beforeQuit = () => {
+    quittingApp = true;
+    client.emit(consts.eventNames.appCmdQuit);
+};
 
 // App is ready
 function onReady () {
@@ -294,6 +297,7 @@ function start(address = process.argv[2]) {
     } else {
         app.on("ready", onReady);
     }
+    app.on("window-all-closed", app.quit);
 }
 
 // menuCreate creates a new menu
@@ -539,4 +543,9 @@ function executeCallback(k, json, args) {
 function sessionCreate(webContents, sessionId) {
     elements[sessionId] = webContents.session
     elements[sessionId].on('will-download', () => { client.write(sessionId, consts.eventNames.sessionEventWillDownload) })
+}
+
+module.exports = {
+  lastWindow,
+  start
 }
