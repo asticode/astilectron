@@ -2,6 +2,7 @@
   "name": "astilectron",
   "description": "Electron-based cross-language application framework",
   "version": "1.0.1",
+  "bin": "cli.js",
   "main": "main.js",
   "devDependencies": {
     "electron": "1.8.1"
