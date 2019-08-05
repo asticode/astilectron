@@ -3,6 +3,8 @@
 const net = require('net');
 const url = require('url');
 
+const consts = require('./consts');
+
 // Client can read/write messages from a TCP server
 class Client {
     // init initializes the Client
@@ -21,6 +23,11 @@ class Client {
         let data = {name: eventName, targetID: targetID}
         if (typeof payload !== "undefined") Object.assign(data, payload)
         this.socket.write(JSON.stringify(data) + "\n")
+    }
+
+    // emit sends an event to the 'app' target.
+    emit(eventName, payload) {
+        return this.write(consts.targetIds.app, eventName, payload)
     }
 }
 
