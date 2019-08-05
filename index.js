@@ -285,11 +285,15 @@ function onReady () {
 
 // start begins listening to go-astilectron.
 function start(address = process.argv[2]) {
-  client.init(address);
-  rl = readline.createInterface({ input: client.socket });
+    client.init(address);
+    rl = readline.createInterface({ input: client.socket });
 
-  app.on("before-quit", beforeQuit);
-  app.on("ready", onReady);
+    app.on("before-quit", beforeQuit);
+    if (app.isReady()) {
+        onReady();
+    } else {
+        app.on("ready", onReady);
+    }
 }
 
 // menuCreate creates a new menu
