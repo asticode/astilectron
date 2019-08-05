@@ -284,7 +284,7 @@ function onReady () {
 };
 
 // start begins listening to go-astilectron.
-export function start(address = process.argv[2]) {
+function start(address = process.argv[2]) {
   client.init(address);
   rl = readline.createInterface({ input: client.socket });
 
