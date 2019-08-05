@@ -6,8 +6,8 @@ const url = require('url');
 // Client can read/write messages from a TCP server
 class Client {
     // init initializes the Client
-    init() {
-        let u = url.parse("tcp://" + process.argv[2], false, false)
+    init(addr = process.argv[2]) {
+        let u = url.parse("tcp://" + addr, false, false)
         this.socket = new net.Socket()
         this.socket.connect(u.port, u.hostname, function() {});
         this.socket.on('close', function() {
