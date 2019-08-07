@@ -13,7 +13,7 @@
     "Spencer Brower (https://github.com/sbrow"
   ],
   "bin": "cli.js",
-  "main": "main.js",
+  "main": "index.js",
   "peerDependencies": {
     "electron": ">=1.8.1"
   }
