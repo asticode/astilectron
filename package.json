@@ -14,7 +14,7 @@
   ],
   "bin": "cli.js",
   "main": "main.js",
-  "devDependencies": {
-    "electron": "1.8.1"
+  "peerDependencies": {
+    "electron": ">=1.8.1"
   }
 }
