@@ -1,7 +1,17 @@
 {
   "name": "@sbrow/astilectron",
-  "description": "Electron-based cross-language application framework",
   "version": "0.1.0",
+  "description": "Electron-based cross-language application framework",
+  "license": "MIT",
+  "author": "Quentin Renard (https://github.com/asticode)",
+  "contributors": [
+    "fregie (https://github.com/fregie)",
+    "vahid-sohrabloo (https://github.com/vahid-sohrabloo)"
+    "cbairy (https://github.com/cbairy)",
+    "john dev (https://github.com/john-dev)",
+    "AONOSORA (https://github.com/ZEROKISEKI)",
+    "Spencer Brower (https://github.com/sbrow"
+  ],
   "bin": "cli.js",
   "main": "main.js",
   "devDependencies": {
