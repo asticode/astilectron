@@ -12,7 +12,7 @@
     "AONOSORA (https://github.com/ZEROKISEKI)",
     "Spencer Brower (https://github.com/sbrow"
   ],
-  "bin": "cli.js",
+  "bin": "main.js",
   "main": "index.js",
   "peerDependencies": {
     "electron": ">=1.8.1"
