@@ -1,6 +1,6 @@
 {
   "name": "@sbrow/astilectron",
-  "version": "0.1.0",
+  "version": "0.33.0",
   "description": "Electron-based cross-language application framework",
   "license": "MIT",
   "author": "Quentin Renard (https://github.com/asticode)",
