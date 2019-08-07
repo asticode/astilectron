@@ -1,5 +1,5 @@
 {
-  "name": "@sbrow/astilectron",
+  "name": "astilectron",
   "version": "0.33.0",
   "description": "Electron-based cross-language application framework",
   "license": "MIT",
