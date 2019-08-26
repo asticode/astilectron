@@ -86,9 +86,6 @@ app.on('ready',() => {
             // App
             case consts.eventNames.appCmdQuit:
             rl.close()
-            setTimeout(function(){
-                app.quit();
-            }, 100)
             app.quit();
             break;
 

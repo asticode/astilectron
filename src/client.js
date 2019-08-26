@@ -8,7 +8,7 @@ class Client {
     // init initializes the Client
     init() {
 
-        this.getconnection()
+        this.connect()
 
         this.socket.on('error', function(err){
             // Writing to a file in case of error related to socket
@@ -32,17 +32,20 @@ class Client {
         this.socket.write(JSON.stringify(data) + "\n")
     }
 
-    // for proper socket closing
+    /*
+     * for proper socket closing, unix socket remains open even after
+     * quiting the application, this function ends the socket connection
+     */
     close() {
         this.socket.end()
     }
 
-    // getconnection establishes connection based on underlying OS
-    getconnection() {
+    // establishes connection based on underlying OS
+    connect() {
         if ( os.platform() != "win32" ) {
-            this.socket = net.createConnection(process.argv[1]);
+            this.socket = net.createConnection(process.argv[2]);
         } else {
-            let u = url.parse("tcp://" + process.argv[1], false, false)
+            let u = url.parse("tcp://" + process.argv[2], false, false)
             this.socket = new net.Socket()
             this.socket.connect(u.port, u.hostname, function() {});
         }
