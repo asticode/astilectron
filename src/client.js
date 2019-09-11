@@ -43,9 +43,9 @@ class Client {
     // establishes connection based on underlying OS
     connect() {
         if ( os.platform() != "win32" ) {
-            this.socket = net.createConnection(process.argv[2]);
+            this.socket = net.createConnection(process.argv[3]);
         } else {
-            let u = url.parse("tcp://" + process.argv[2], false, false)
+            let u = url.parse("tcp://" + process.argv[3], false, false)
             this.socket = new net.Socket()
             this.socket.connect(u.port, u.hostname, function() {});
         }
