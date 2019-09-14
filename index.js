@@ -20,7 +20,7 @@ let lastWindow = null;
 // App is quitting
 const beforeQuit = () => {
     quittingApp = true;
-    client.emit(consts.eventNames.appCmdQuit);
+    client.write(consts.targetIds.app,consts.eventNames.appCmdQuit);
 };
 
 // App is ready
