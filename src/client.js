@@ -1,14 +1,14 @@
-'use strict'
+"use strict";
 
-const net = require('net');
-const url = require('url');
+const net = require("net");
+const url = require("url");
 
 // Client can read/write messages from a TCP server
 class Client {
     // init initializes the Client
-    init() {
+    init(addr) {
 
-        this.connect()
+        this.connect(addr)
 
         this.socket.on('error', function(err){
             // Writing to a file in case of error related to socket
@@ -41,15 +41,15 @@ class Client {
     }
 
     // establishes connection based on underlying OS
-    connect() {
+    connect(addr) {
         if ( os.platform() != "win32" ) {
-            this.socket = net.createConnection(process.argv[3]);
+            this.socket = net.createConnection(addr);
         } else {
-            let u = url.parse("tcp://" + process.argv[3], false, false)
+            let u = url.parse("tcp://" + addr, false, false)
             this.socket = new net.Socket()
             this.socket.connect(u.port, u.hostname, function() {});
         }
     }
 }
 
-module.exports = new Client()
+module.exports = new Client();

@@ -1,7 +1,20 @@
 {
-  "name": "Astilectron",
+  "name": "astilectron",
+  "version": "0.33.0",
   "description": "Electron-based cross-language application framework",
-  "devDependencies": {
-    "electron": "1.8.1"
+  "license": "MIT",
+  "author": "Quentin Renard (https://github.com/asticode)",
+  "contributors": [
+    "fregie (https://github.com/fregie)",
+    "vahid-sohrabloo (https://github.com/vahid-sohrabloo)",
+    "cbairy (https://github.com/cbairy)",
+    "john dev (https://github.com/john-dev)",
+    "AONOSORA (https://github.com/ZEROKISEKI)",
+    "Spencer Brower (https://github.com/sbrow"
+  ],
+  "bin": "main.js",
+  "main": "index.js",
+  "peerDependencies": {
+    "electron": ">=1.8.1"
   }
 }
