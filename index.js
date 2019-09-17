@@ -62,6 +62,7 @@ function onReady () {
         switch (json.name) {
             // App
             case consts.eventNames.appCmdQuit:
+	    rl.close()
             app.quit();
             break;
 
