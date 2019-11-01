@@ -2,21 +2,30 @@
 
 const net = require("net");
 const url = require("url");
+const {dialog} = require("electron").remote
 
 // Client can read/write messages from a TCP server
 class Client {
     // init initializes the Client
     init(addr) {
 
-        this.connect(addr)
+        var fs = require('fs')
+        fs.appendFile("/tmp/astilectron.log", "Addr: "+addr, function(e){
+            console.log("Error while writing to file:"+e);
+        })
+
+        this.socket = net.createConnection(addr);
+        //this.connect(addr)
 
         this.socket.on('error', function(err){
-            // Writing to a file in case of error related to socket
-            var fs = require('fs');
-            fs.appendFile("/tmp/astilectron.log", "Socket Error: "+err, function(e){
-                console.log("Error while writing to file:"+e);
-            })
-            process.exit()
+            // Raising an exception in case of any error in socket
+            const messageBoxOptions = {
+                type: "error",
+                title: "Error in Main process",
+                message: err
+            };
+            dialog.showMessageBox(messageBoxOptions);
+            process.exit(1)
         })
 
         this.socket.on('close', function() {
@@ -40,15 +49,15 @@ class Client {
         this.socket.end()
     }
 
-    // establishes connection based on underlying OS
     connect(addr) {
-        if ( os.platform() != "win32" ) {
-            this.socket = net.createConnection(addr);
-        } else {
-            let u = url.parse("tcp://" + addr, false, false)
+        tcp = "tcp://";
+        if (addr.indexOf(tcp) == 0) {
+            let u = url.parse(addr, false, false)
             this.socket = new net.Socket()
-            this.socket.connect(u.port, u.hostname, function() {});
-        }
+            this.socket.connect(u.port, u.hostname, function() {});    
+        } else {
+            this.socket = net.createConnection(addr);
+        }        
     }
 }
 

@@ -1,8 +1,16 @@
 "use strict";
 
+process.argv.forEach(function (val, index, array) {
+  var fs = require('fs')
+  fs.appendFile("/tmp/astilectron.log", index + ': ' + val, function(e){
+    console.log("Error while writing to file:"+e);
+  })
+});
+
 const app = require("electron");
 const start = require("./index").start;
 const lastWindow = require("./index").lastWindow;
+
 
 if (process.argv[3] === "true") {
   // Lock
