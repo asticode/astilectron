@@ -1,8 +1,7 @@
 "use strict";
 
-const app = require("electron");
-const start = require("./index").start;
-const lastWindow = require("./index").lastWindow;
+const { app } = require("electron");
+const { start, lastWindow } = require("./index");
 
 if (process.argv[3] === "true") {
   // Lock
