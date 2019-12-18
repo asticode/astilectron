@@ -8,7 +8,8 @@ const {dialog} = require("electron")
 class Client {
     // init initializes the Client
     init(addr) {
-        this.connect(addr)
+        
+        this.socket = net.createConnection(addr);
 
         this.socket.on('error', function(err){
             // Raising an exception in case of any error in socket
@@ -40,16 +41,6 @@ class Client {
      */
     close() {
         this.socket.end();
-    }
-
-    connect(addr) {
-        if (net.isIP(addr) > 0) {
-            let u = url.parse(addr, false, false);
-            this.socket = new net.Socket();
-            this.socket.connect(u.port, u.hostname, function() {});    
-        } else {
-            this.socket = net.createConnection(addr);
-        }
     }
 }
 

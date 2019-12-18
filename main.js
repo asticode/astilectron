@@ -4,7 +4,6 @@ const app = require("electron");
 const start = require("./index").start;
 const lastWindow = require("./index").lastWindow;
 
-
 if (process.argv[3] === "true") {
   // Lock
   const singlesInstanceLock = app.requestSingleInstanceLock();
