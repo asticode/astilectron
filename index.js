@@ -380,6 +380,10 @@ function trayCreate(json) {
 
 // windowCreate creates a new window
 function windowCreate(json) {
+    if (!json.windowOptions.webPreferences) {
+        json.windowOptions.webPreferences = {}
+    }
+    json.windowOptions.webPreferences.nodeIntegration = true
     elements[json.targetID] = new BrowserWindow(json.windowOptions)
     if (typeof json.windowOptions.proxy !== "undefined") {
         elements[json.targetID].webContents.session.setProxy(json.windowOptions.proxy, function() {
