@@ -437,7 +437,6 @@ function windowCreateFinish(json) {
     elements[json.targetID].webContents.on('did-finish-load', () => {
         elements[json.targetID].webContents.executeJavaScript(
             `const {ipcRenderer} = require('electron')
-            const {dialog} = require('electron').remote
             var astilectron = {
                 onMessageOnce: false,
                 onMessage: function(callback) {
@@ -477,18 +476,6 @@ function windowCreateFinish(json) {
                 },
                 sendMessage: function(message, callback) {
                     astilectron.registerCallback('` + consts.callbackNames.webContentsMessage + `', {message: message}, callback, '`+ consts.eventNames.ipcEventMessage +`');
-                },
-                showErrorBox: function(title, content) {
-                    dialog.showErrorBox(title, content)
-                },
-                showMessageBox: function(options, callback) {
-                    dialog.showMessageBox(null, options, callback)
-                },
-                showOpenDialog: function(options, callback) {
-                    dialog.showOpenDialog(null, options, callback)
-                },
-                showSaveDialog: function(options, callback) {
-                    dialog.showSaveDialog(null, options, callback)
                 }
             };
             ipcRenderer.on('`+ consts.eventNames.ipcCmdMessageCallback +`', function(event, message) {
