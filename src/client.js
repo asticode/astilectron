@@ -18,6 +18,7 @@ class Client {
 
   // write writes an event to the server
   write(targetID, eventName, payload) {
+    if(this.socket.destroyed) return;
     let data = { name: eventName, targetID: targetID };
     if (typeof payload !== "undefined") Object.assign(data, payload);
     this.socket.write(JSON.stringify(data) + "\n");
