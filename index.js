@@ -386,9 +386,8 @@ function windowCreate(json) {
     json.windowOptions.webPreferences.nodeIntegration = true
     elements[json.targetID] = new BrowserWindow(json.windowOptions)
     if (typeof json.windowOptions.proxy !== "undefined") {
-        elements[json.targetID].webContents.session.setProxy(json.windowOptions.proxy, function() {
-            windowCreateFinish(json)
-        })
+        elements[json.targetID].webContents.session.setProxy(json.windowOptions.proxy)
+            .then(() => windowCreateFinish(json))
     } else {
         windowCreateFinish(json)
     }
