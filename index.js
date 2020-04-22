@@ -156,9 +156,13 @@ function onReady () {
 
             // Session
             case consts.eventNames.sessionCmdClearCache:
-            elements[json.targetID].clearCache(function() {
+            elements[json.targetID].clearCache().then(() => {
                 client.write(json.targetID, consts.eventNames.sessionEventClearedCache)
             })
+            break;
+            case consts.eventNames.sessionCmdFlushStorage:
+            elements[json.targetID].flushStorageData();
+            client.write(json.targetID, consts.eventNames.sessionEventFlushedStorage)
             break;
 
             // Sub menu
