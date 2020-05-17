@@ -212,9 +212,6 @@ function onReady () {
             case consts.eventNames.webContentsEventLoginCallback:
             executeCallback(consts.callbackNames.webContentsLogin, json, [json.username, json.password]);
             break;
-            case consts.eventNames.webContentsExecuteJavaScript:
-            elements[json.targetID].webContents.executeJavaScript(json.code).then((result) => client.write(json.targetID, consts.eventNames.webContentsExecuteJavaScript, {result}));
-            break;
 
             // Window
             case consts.eventNames.windowCmdBlur:
@@ -277,6 +274,9 @@ function onReady () {
             break;
             case consts.eventNames.windowCmdUnmaximize:
             elements[json.targetID].unmaximize()
+            break;
+            case consts.eventNames.windowCmdWebContentsExecuteJavascript:
+            elements[json.targetID].webContents.executeJavaScript(json.code).then((result) => client.write(json.targetID, consts.eventNames.webContentsExecuteJavaScript, {result}));
             break;
         }
     });
