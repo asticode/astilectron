@@ -75,7 +75,7 @@ module.exports = {
         trayEventRightClicked: "tray.event.right.clicked",
         webContentsEventLogin: "web.contents.event.login",
         webContentsEventLoginCallback: "web.contents.event.login.callback",
-        webContentsExecuteJavaScript: "web.contents.execute.javascript",
+        webContentsExecutedJavaScript: "web.contents.executed.javascript",
         windowCmdBlur: "window.cmd.blur",
         windowCmdCenter: "window.cmd.center",
         windowCmdClose: "window.cmd.close",
