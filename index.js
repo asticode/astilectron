@@ -275,6 +275,9 @@ function onReady () {
             case consts.eventNames.windowCmdUnmaximize:
             elements[json.targetID].unmaximize()
             break;
+            case consts.eventNames.windowCmdWebContentsExecuteJavascript:
+            elements[json.targetID].webContents.executeJavaScript(json.code).then(() => client.write(json.targetID, consts.eventNames.webContentsExecutedJavaScript));
+            break;
         }
     });
 
