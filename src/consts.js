@@ -75,7 +75,6 @@ module.exports = {
         trayEventRightClicked: "tray.event.right.clicked",
         webContentsEventLogin: "web.contents.event.login",
         webContentsEventLoginCallback: "web.contents.event.login.callback",
-        webContentsExecutedJavaScript: "window.event.web.contents.executed.javascript",
         windowCmdBlur: "window.cmd.blur",
         windowCmdCenter: "window.cmd.center",
         windowCmdClose: "window.cmd.close",
@@ -114,7 +113,8 @@ module.exports = {
         windowEventRestore: "window.event.restore",
         windowEventShow: "window.event.show",
         windowEventUnmaximize: "window.event.unmaximize",
-        windowEventUnresponsive: "window.event.unresponsive"
+        windowEventUnresponsive: "window.event.unresponsive",
+        windowEventWebContentsExecutedJavaScript: "window.event.web.contents.executed.javascript"
     },
     targetIds: {
         app: 'app',
