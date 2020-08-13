@@ -294,9 +294,27 @@ function onReady () {
 };
 
 // start begins listening to go-astilectron.
-function start(address = process.argv[2]) {
+function start(address, singlesInstance) {
     client.init(address);
     rl = readline.createInterface({ input: client.socket });
+
+    if (singlesInstance) {
+        // Lock
+        const singlesInstanceLock = app.requestSingleInstanceLock();
+        if (!singlesInstanceLock) {
+            app.quit();
+            return;
+        }
+
+        // Someone tried to run a second instance, we should focus our window.
+        app.on("second-instance", (event, commandLine, workingDirectory) => {
+            client.write(consts.targetIds.app, consts.eventNames.appEventSecondInstance, {commandLine: commandLine, workingDirectory: workingDirectory});
+            if (lastWindow) {
+                if (lastWindow.isMinimized()) lastWindow.restore();
+                lastWindow.show();
+            }
+        });
+    }
 
     app.on("before-quit", beforeQuit);
     if (app.isReady()) {
