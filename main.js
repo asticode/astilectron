@@ -3,7 +3,7 @@
 const { app } = require("electron");
 const { start, lastWindow } = require("./index");
 
-if (process.argv[3] === "true") {
+if (process.argv[3] === "true" || process.argv.length == 1) {
   // Lock
   const singlesInstanceLock = app.requestSingleInstanceLock();
   if (!singlesInstanceLock) {
