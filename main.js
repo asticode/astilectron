@@ -3,7 +3,14 @@
 const { app } = require("electron");
 const { start, lastWindow } = require("./index");
 
-if (process.argv[3] === "true" || process.argv.length == 1) {
+// edge case when the program is launched without arguments
+if (process.argv.length == 1) {
+  app.requestSingleInstanceLock();
+  app.quit();
+  return;
+}
+
+if (process.argv[3] === "true") {
   // Lock
   const singlesInstanceLock = app.requestSingleInstanceLock();
   if (!singlesInstanceLock) {
