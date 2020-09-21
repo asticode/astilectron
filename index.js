@@ -542,7 +542,11 @@ function sessionCreate(webContents, sessionId) {
     elements[sessionId].on('will-download', () => { client.write(sessionId, consts.eventNames.sessionEventWillDownload) })
 }
 
+function getLastWindow() {
+    return lastWindow
+}
+
 module.exports = {
-  lastWindow,
+  getLastWindow,
   start
 }

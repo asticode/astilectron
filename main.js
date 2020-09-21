@@ -1,7 +1,7 @@
 "use strict";
 
 const { app } = require("electron");
-const { start, lastWindow } = require("./index");
+const { start, getLastWindow } = require("./index");
 
 if (process.argv[3] === "true") {
   // Lock
@@ -13,6 +13,7 @@ if (process.argv[3] === "true") {
 
   // Someone tried to run a second instance, we should focus our window.
   app.on("second-instance", (event, commandLine, workingDirectory) => {
+    const lastWindow = getLastWindow()
     if (lastWindow) {
       if (lastWindow.isMinimized()) lastWindow.restore();
       lastWindow.show();
