@@ -408,7 +408,7 @@ function windowCreateFinish(json) {
     elements[json.targetID].on('close', (e) => {
         if (typeof json.windowOptions.custom !== "undefined") {
             if (typeof json.windowOptions.custom.messageBoxOnClose !== "undefined") {
-                let buttonId = dialog.showMessageBox(null, json.windowOptions.custom.messageBoxOnClose)
+                let buttonId = dialog.showMessageBoxSync(null, json.windowOptions.custom.messageBoxOnClose)
                 if (typeof json.windowOptions.custom.messageBoxOnClose.confirmId !== "undefined" && json.windowOptions.custom.messageBoxOnClose.confirmId !== buttonId) {
                     e.preventDefault()
                     return
