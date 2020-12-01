@@ -157,9 +157,13 @@ function onReady () {
 
             // Session
             case consts.eventNames.sessionCmdClearCache:
-            elements[json.targetID].clearCache(function() {
+            elements[json.targetID].clearCache().then(() => {
                 client.write(json.targetID, consts.eventNames.sessionEventClearedCache)
             })
+            break;
+            case consts.eventNames.sessionCmdFlushStorage:
+            elements[json.targetID].flushStorageData();
+            client.write(json.targetID, consts.eventNames.sessionEventFlushedStorage)
             break;
 
             // Sub menu
@@ -272,6 +276,9 @@ function onReady () {
             case consts.eventNames.windowCmdUnmaximize:
             elements[json.targetID].unmaximize()
             break;
+            case consts.eventNames.windowCmdWebContentsExecuteJavascript:
+            elements[json.targetID].webContents.executeJavaScript(json.code).then(() => client.write(json.targetID, consts.eventNames.windowEventWebContentsExecutedJavaScript));
+            break;
         }
     });
 
@@ -381,11 +388,14 @@ function trayCreate(json) {
 
 // windowCreate creates a new window
 function windowCreate(json) {
+    if (!json.windowOptions.webPreferences) {
+        json.windowOptions.webPreferences = {}
+    }
+    json.windowOptions.webPreferences.nodeIntegration = true
     elements[json.targetID] = new BrowserWindow(json.windowOptions)
     if (typeof json.windowOptions.proxy !== "undefined") {
-        elements[json.targetID].webContents.session.setProxy(json.windowOptions.proxy, function() {
-            windowCreateFinish(json)
-        })
+        elements[json.targetID].webContents.session.setProxy(json.windowOptions.proxy)
+            .then(() => windowCreateFinish(json))
     } else {
         windowCreateFinish(json)
     }
@@ -399,7 +409,7 @@ function windowCreateFinish(json) {
     elements[json.targetID].on('close', (e) => {
         if (typeof json.windowOptions.custom !== "undefined") {
             if (typeof json.windowOptions.custom.messageBoxOnClose !== "undefined") {
-                let buttonId = dialog.showMessageBox(null, json.windowOptions.custom.messageBoxOnClose)
+                let buttonId = dialog.showMessageBoxSync(null, json.windowOptions.custom.messageBoxOnClose)
                 if (typeof json.windowOptions.custom.messageBoxOnClose.confirmId !== "undefined" && json.windowOptions.custom.messageBoxOnClose.confirmId !== buttonId) {
                     e.preventDefault()
                     return
@@ -434,7 +444,6 @@ function windowCreateFinish(json) {
     elements[json.targetID].webContents.on('did-finish-load', () => {
         elements[json.targetID].webContents.executeJavaScript(
             `const {ipcRenderer} = require('electron')
-            const {dialog} = require('electron').remote
             var astilectron = {
                 onMessageOnce: false,
                 onMessage: function(callback) {
@@ -474,18 +483,6 @@ function windowCreateFinish(json) {
                 },
                 sendMessage: function(message, callback) {
                     astilectron.registerCallback('` + consts.callbackNames.webContentsMessage + `', {message: message}, callback, '`+ consts.eventNames.ipcEventMessage +`');
-                },
-                showErrorBox: function(title, content) {
-                    dialog.showErrorBox(title, content)
-                },
-                showMessageBox: function(options, callback) {
-                    dialog.showMessageBox(null, options, callback)
-                },
-                showOpenDialog: function(options, callback) {
-                    dialog.showOpenDialog(null, options, callback)
-                },
-                showSaveDialog: function(options, callback) {
-                    dialog.showSaveDialog(null, options, callback)
                 }
             };
             ipcRenderer.on('`+ consts.eventNames.ipcCmdMessageCallback +`', function(event, message) {
@@ -546,7 +543,11 @@ function sessionCreate(webContents, sessionId) {
     elements[sessionId].on('will-download', () => { client.write(sessionId, consts.eventNames.sessionEventWillDownload) })
 }
 
+function getLastWindow() {
+    return lastWindow
+}
+
 module.exports = {
-  lastWindow,
+  getLastWindow,
   start
 }

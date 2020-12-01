@@ -10,7 +10,7 @@ class Client {
     init(addr) {
         
         this.socket = net.createConnection(addr);
-
+      
         this.socket.on('error', function(err){
             // Raising an exception in case of any error in socket
             const messageBoxOptions = {
@@ -30,9 +30,10 @@ class Client {
 
     // write writes an event to the server
     write(targetID, eventName, payload) {
-        let data = {name: eventName, targetID: targetID}
-        if (typeof payload !== "undefined") Object.assign(data, payload)
-        this.socket.write(JSON.stringify(data) + "\n")
+      if(this.socket.destroyed) return;
+      let data = { name: eventName, targetID: targetID };
+      if (typeof payload !== "undefined") Object.assign(data, payload);
+      this.socket.write(JSON.stringify(data) + "\n");
     }
 
     /*
