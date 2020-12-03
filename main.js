@@ -1,9 +1,7 @@
 "use strict";
 
 const { app } = require("electron");
-const { start, getLastWindow } = require("./index");
-const client = require('./src/client.js')
-const consts = require('./src/consts.js')
+const { start, getLastWindow, client, consts } = require("./index");
 
 // edge case when the program is launched without arguments
 if (process.argv.length == 1) {

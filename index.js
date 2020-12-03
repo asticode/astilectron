@@ -548,5 +548,7 @@ function getLastWindow() {
 
 module.exports = {
   getLastWindow,
-  start
+  start,
+  client,
+  consts
 }
