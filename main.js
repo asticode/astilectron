@@ -1,7 +1,7 @@
 "use strict";
 
 const { app } = require("electron");
-const { start, getLastWindow } = require("./index");
+const { start, getLastWindow, client, consts } = require("./index");
 
 // edge case when the program is launched without arguments
 if (process.argv.length == 1) {
@@ -20,6 +20,7 @@ if (process.argv[3] === "true") {
 
   // Someone tried to run a second instance, we should focus our window.
   app.on("second-instance", (event, commandLine, workingDirectory) => {
+    client.write(consts.targetIds.app, consts.eventNames.appEventSecondInstance, {secondInstance: {commandLine: commandLine, workingDirectory: workingDirectory}})
     const lastWindow = getLastWindow()
     if (lastWindow) {
       if (lastWindow.isMinimized()) lastWindow.restore();
