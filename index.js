@@ -411,7 +411,7 @@ function windowCreateFinish(json) {
     elements[json.targetID].loadURL(json.url, (typeof json.windowOptions.load !== "undefined" ? json.windowOptions.load :  {}));
     elements[json.targetID].on('blur', () => { client.write(json.targetID, consts.eventNames.windowEventBlur) })
     elements[json.targetID].on('close', (e) => {
-        if (typeof windowOptions[json.targetID].custom !== "undefined") {
+        if (typeof windowOptions[json.targetID] !== "undefined" && typeof windowOptions[json.targetID].custom !== "undefined") {
             if (typeof windowOptions[json.targetID].custom.messageBoxOnClose !== "undefined") {
                 let buttonId = dialog.showMessageBoxSync(null, windowOptions[json.targetID].custom.messageBoxOnClose)
                 if (typeof windowOptions[json.targetID].custom.messageBoxOnClose.confirmId !== "undefined" && windowOptions[json.targetID].custom.messageBoxOnClose.confirmId !== buttonId) {
