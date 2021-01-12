@@ -94,6 +94,7 @@ module.exports = {
         windowCmdRestore: "window.cmd.restore",
         windowCmdShow: "window.cmd.show",
         windowCmdUnmaximize: "window.cmd.unmaximize",
+        windowCmdUpdateCustomOptions: "window.cmd.update.custom.options",
         windowCmdWebContentsCloseDevTools: "window.cmd.web.contents.close.dev.tools",
         windowCmdWebContentsOpenDevTools: "window.cmd.web.contents.open.dev.tools",
         windowCmdWebContentsExecuteJavascript: "window.cmd.web.contents.execute.javascript",
