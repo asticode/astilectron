@@ -278,6 +278,7 @@ function onReady () {
             break;
             case consts.eventNames.windowCmdUpdateCustomOptions:
             windowOptions[json.targetID] = json.windowOptions
+            client.write(json.targetID, consts.eventNames.windowEventUpdateCustomOptions, json.windowOptions)
             break;
             case consts.eventNames.windowCmdWebContentsExecuteJavascript:
             elements[json.targetID].webContents.executeJavaScript(json.code).then(() => client.write(json.targetID, consts.eventNames.windowEventWebContentsExecutedJavaScript));
