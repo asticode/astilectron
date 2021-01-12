@@ -117,7 +117,7 @@ module.exports = {
         windowEventUnmaximize: "window.event.unmaximize",
         windowEventUnresponsive: "window.event.unresponsive",
         windowEventWebContentsExecutedJavaScript: "window.event.web.contents.executed.javascript",
-        windowEventUpdateCustomOptions: "window.event.update.custom.options"
+        windowEventUpdatedCustomOptions: "window.event.updated.custom.options"
     },
     targetIds: {
         app: 'app',
