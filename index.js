@@ -16,7 +16,7 @@ let menus = {};
 let quittingApp = false;
 
 // Single instance
-let lastWindow = null;
+let lastWindowId = null;
 
 // App is quitting
 const beforeQuit = () => {
@@ -522,7 +522,7 @@ function windowCreateFinish(json) {
         elements[json.targetID].setAppDetails(json.windowOptions.appDetails);
     }
 
-    lastWindow = elements[json.targetID]
+    lastWindowId = json.targetID
 }
 
 function registerCallback(json, k, e, n, c) {
@@ -549,7 +549,8 @@ function sessionCreate(webContents, sessionId) {
 }
 
 function getLastWindow() {
-    return lastWindow
+    if (elements[lastWindowId]) return elements[lastWindowId]
+    return null
 }
 
 module.exports = {
