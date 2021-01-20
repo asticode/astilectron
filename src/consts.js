@@ -94,6 +94,7 @@ module.exports = {
         windowCmdRestore: "window.cmd.restore",
         windowCmdShow: "window.cmd.show",
         windowCmdUnmaximize: "window.cmd.unmaximize",
+        windowCmdUpdateCustomOptions: "window.cmd.update.custom.options",
         windowCmdWebContentsCloseDevTools: "window.cmd.web.contents.close.dev.tools",
         windowCmdWebContentsOpenDevTools: "window.cmd.web.contents.open.dev.tools",
         windowCmdWebContentsExecuteJavascript: "window.cmd.web.contents.execute.javascript",
@@ -115,7 +116,8 @@ module.exports = {
         windowEventShow: "window.event.show",
         windowEventUnmaximize: "window.event.unmaximize",
         windowEventUnresponsive: "window.event.unresponsive",
-        windowEventWebContentsExecutedJavaScript: "window.event.web.contents.executed.javascript"
+        windowEventWebContentsExecutedJavaScript: "window.event.web.contents.executed.javascript",
+        windowEventUpdatedCustomOptions: "window.event.updated.custom.options"
     },
     targetIds: {
         app: 'app',
