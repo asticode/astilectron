@@ -93,11 +93,13 @@ module.exports = {
         windowCmdSetBounds: "window.cmd.set.bounds",
         windowCmdRestore: "window.cmd.restore",
         windowCmdShow: "window.cmd.show",
+        windowCmdLoadUrl: "window.cmd.load.url",
         windowCmdUnmaximize: "window.cmd.unmaximize",
         windowCmdUpdateCustomOptions: "window.cmd.update.custom.options",
         windowCmdWebContentsCloseDevTools: "window.cmd.web.contents.close.dev.tools",
         windowCmdWebContentsOpenDevTools: "window.cmd.web.contents.open.dev.tools",
         windowCmdWebContentsExecuteJavascript: "window.cmd.web.contents.execute.javascript",
+        windowCmdWebContentsSetProxy: "window.cmd.web.contents.set.proxy",
         windowEventBlur: "window.event.blur",
         windowEventClosed: "window.event.closed",
         windowEventDidFinishLoad: "window.event.did.finish.load",
@@ -116,7 +118,9 @@ module.exports = {
         windowEventShow: "window.event.show",
         windowEventUnmaximize: "window.event.unmaximize",
         windowEventUnresponsive: "window.event.unresponsive",
+        windowEventLoadedUrl: "window.event.load.url",
         windowEventWebContentsExecutedJavaScript: "window.event.web.contents.executed.javascript",
+        windowEventWebContentsSetProxy: "window.event.web.contents.set.proxy",
         windowEventUpdatedCustomOptions: "window.event.updated.custom.options"
     },
     targetIds: {
