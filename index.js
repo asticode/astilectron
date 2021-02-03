@@ -1,3 +1,4 @@
+
 // @ts-check
 'use strict'
 
@@ -267,6 +268,12 @@ function onReady () {
             case consts.eventNames.windowCmdShow:
             elements[json.targetID].show()
             break;
+            case consts.eventNames.windowCmdLoadUrl:
+            elements[json.targetID].loadURL(json.url, {}).then(() => {
+                client.write(json.targetID, consts.eventNames.windowEventLoadedUrl);
+            });
+            break;
+
             case consts.eventNames.windowCmdWebContentsCloseDevTools:
             elements[json.targetID].webContents.closeDevTools()
             break;
@@ -277,11 +284,17 @@ function onReady () {
             elements[json.targetID].unmaximize()
             break;
             case consts.eventNames.windowCmdUpdateCustomOptions:
-            windowOptions[json.targetID] = json.windowOptions
-            client.write(json.targetID, consts.eventNames.windowEventUpdatedCustomOptions, json.windowOptions)
+            client.write(json.targetID, consts.eventNames.windowEventUpdatedCustomOptions, json.windowOptions);
             break;
             case consts.eventNames.windowCmdWebContentsExecuteJavascript:
-            elements[json.targetID].webContents.executeJavaScript(json.code).then(() => client.write(json.targetID, consts.eventNames.windowEventWebContentsExecutedJavaScript));
+            elements[json.targetID].webContents.executeJavaScript(json.code)
+                .then(() => client.write(json.targetID, consts.eventNames.windowEventWebContentsExecutedJavaScript));
+            break;
+            case consts.eventNames.windowCmdWebContentsSetProxy:
+            elements[json.targetID].webContents.session.clearAuthCache().then(() => {
+                elements[json.targetID].webContents.session.setProxy({proxyRules: json.proxy})
+                    .then(() => client.write(json.targetID, consts.eventNames.windowEventWebContentsSetProxy));
+            });
             break;
         }
     });
