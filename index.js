@@ -273,7 +273,6 @@ function onReady () {
                 client.write(json.targetID, consts.eventNames.windowEventLoadedUrl);
             });
             break;
-
             case consts.eventNames.windowCmdWebContentsCloseDevTools:
             elements[json.targetID].webContents.closeDevTools()
             break;
