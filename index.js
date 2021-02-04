@@ -292,7 +292,7 @@ function onReady () {
             break;
             case consts.eventNames.windowCmdWebContentsSetProxy:
             elements[json.targetID].webContents.session.clearAuthCache().then(() => {
-                elements[json.targetID].webContents.session.setProxy({proxyRules: json.proxy})
+                elements[json.targetID].webContents.session.setProxy(json.proxy)
                     .then(() => client.write(json.targetID, consts.eventNames.windowEventWebContentsSetProxy));
             });
             break;
