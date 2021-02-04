@@ -118,7 +118,7 @@ module.exports = {
         windowEventShow: "window.event.show",
         windowEventUnmaximize: "window.event.unmaximize",
         windowEventUnresponsive: "window.event.unresponsive",
-        windowEventLoadedUrl: "window.event.load.url",
+        windowEventLoadedUrl: "window.event.loaded.url",
         windowEventWebContentsExecutedJavaScript: "window.event.web.contents.executed.javascript",
         windowEventWebContentsSetProxy: "window.event.web.contents.set.proxy",
         windowEventUpdatedCustomOptions: "window.event.updated.custom.options"
