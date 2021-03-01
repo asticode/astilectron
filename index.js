@@ -247,7 +247,10 @@ function onReady () {
             case consts.eventNames.windowCmdMessageCallback:
             let m = {message: json.message}
             if (typeof json.callbackId !== "undefined") m.callbackId = json.callbackId
-            elements[json.targetID].webContents.send(json.name === consts.eventNames.windowCmdMessageCallback ? consts.eventNames.ipcCmdMessageCallback : consts.eventNames.ipcCmdMessage, m)
+            const targetElement = elements[json.targetID]
+            if (targetElement) {
+                targetElement.webContents.send(json.name === consts.eventNames.windowCmdMessageCallback ? consts.eventNames.ipcCmdMessageCallback : consts.eventNames.ipcCmdMessage, m)
+            }
             break;
             case consts.eventNames.windowCmdMinimize:
             elements[json.targetID].minimize()
