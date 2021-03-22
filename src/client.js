@@ -13,8 +13,9 @@ class Client {
     this.socket.on("close", function() {
       process.exit();
     });
-    this.socket.on("error", function() {
+    this.socket.on("error", function(err) {
       // Prevent Unhandled Exception resulting from TCP Error
+      console.error(err);
     });
     return this;
   }
