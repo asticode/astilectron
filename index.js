@@ -165,7 +165,14 @@ function onReady () {
             elements[json.targetID].flushStorageData();
             client.write(json.targetID, consts.eventNames.sessionEventFlushedStorage)
             break;
-
+            
+            // Load extension
+            case consts.eventNames.sessionCmdLoadExtension:
+            elements[json.targetID].loadExtension().then(() => {
+                client.write(json.targetID, consts.eventNames.sessionEventLoadedExtension)
+            })
+            break;
+                
             // Sub menu
             case consts.eventNames.subMenuCmdAppend:
             elements[json.targetID].append(menuItemCreate(json.menuItem))
