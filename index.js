@@ -165,10 +165,8 @@ function onReady () {
             elements[json.targetID].flushStorageData();
             client.write(json.targetID, consts.eventNames.sessionEventFlushedStorage)
             break;
-            
-            // Load extension
             case consts.eventNames.sessionCmdLoadExtension:
-            elements[json.targetID].loadExtension().then(() => {
+            elements[json.targetID].loadExtension(json.path).then(() => {
                 client.write(json.targetID, consts.eventNames.sessionEventLoadedExtension)
             })
             break;
