@@ -14,6 +14,7 @@ let elements = {};
 let windowOptions = {};
 let menus = {};
 let quittingApp = false;
+let didReady = false;
 
 // Single instance
 let lastWindowId = null;
@@ -27,6 +28,8 @@ const beforeQuit = () => {
 // App is ready
 function onReady () {
     // Init
+    didReady = true;
+
     const screen = electron.screen
     Menu.setApplicationMenu(null)
 
@@ -307,6 +310,13 @@ function onReady () {
 // start begins listening to go-astilectron.
 function start(address = process.argv[2]) {
     client.init(address);
+    client.connectionListener = function () {
+        if (didReady) {
+            // Re-signal ready and recreate a new readline interface on the new socket
+            rl = readline.createInterface({ input: client.socket });
+            onReady();
+        }
+    }
     rl = readline.createInterface({ input: client.socket });
 
     app.on("before-quit", beforeQuit);
@@ -441,6 +451,9 @@ function windowCreateFinish(json) {
     elements[json.targetID].on('closed', () => {
         client.write(json.targetID, consts.eventNames.windowEventClosed)
         delete elements[json.targetID]
+        setTimeout(() => {
+            app.quit()
+        }, 1000)
     })
     elements[json.targetID].on('focus', () => { client.write(json.targetID, consts.eventNames.windowEventFocus) })
     elements[json.targetID].on('hide', () => { client.write(json.targetID, consts.eventNames.windowEventHide) })
