@@ -451,6 +451,9 @@ function windowCreateFinish(json) {
     elements[json.targetID].on('closed', () => {
         client.write(json.targetID, consts.eventNames.windowEventClosed)
         delete elements[json.targetID]
+        setTimeout(() => {
+            app.quit()
+        }, 1000)
     })
     elements[json.targetID].on('focus', () => { client.write(json.targetID, consts.eventNames.windowEventFocus) })
     elements[json.targetID].on('hide', () => { client.write(json.targetID, consts.eventNames.windowEventHide) })
