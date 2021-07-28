@@ -28,33 +28,33 @@ const beforeQuit = () => {
 // App is ready
 function onReady () {
     // Init
-    didReady = true;
-
     const screen = electron.screen
     Menu.setApplicationMenu(null)
 
-    // Listen to screen events
-    screen.on('display-added', function() {
-        client.write(consts.targetIds.app, consts.eventNames.displayEventAdded, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
-    })
-    screen.on('display-metrics-changed', function() {
-        client.write(consts.targetIds.app, consts.eventNames.displayEventMetricsChanged, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
-    })
-    screen.on('display-removed', function() {
-        client.write(consts.targetIds.app, consts.eventNames.displayEventRemoved, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
-    })
+    if (!didReady) {
+        // Listen to screen events
+        screen.on('display-added', function() {
+            client.write(consts.targetIds.app, consts.eventNames.displayEventAdded, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
+        })
+        screen.on('display-metrics-changed', function() {
+            client.write(consts.targetIds.app, consts.eventNames.displayEventMetricsChanged, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
+        })
+        screen.on('display-removed', function() {
+            client.write(consts.targetIds.app, consts.eventNames.displayEventRemoved, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
+        })
 
-    // Listen on main ipcMain
-    ipcMain.on(consts.eventNames.ipcEventMessage, (event, arg) => {
-        let payload = {message: arg.message};
-        if (typeof arg.callbackId !== "undefined") payload.callbackId = arg.callbackId;
-        client.write(arg.targetID, consts.eventNames.windowEventMessage, payload)
-    });
-    ipcMain.on(consts.eventNames.ipcEventMessageCallback, (event, arg) => {
-        let payload = {message: arg.message};
-        if (typeof arg.callbackId !== "undefined") payload.callbackId = arg.callbackId;
-        client.write(arg.targetID, consts.eventNames.windowEventMessageCallback, payload)
-    });
+        // Listen on main ipcMain
+        ipcMain.on(consts.eventNames.ipcEventMessage, (event, arg) => {
+            let payload = {message: arg.message};
+            if (typeof arg.callbackId !== "undefined") payload.callbackId = arg.callbackId;
+            client.write(arg.targetID, consts.eventNames.windowEventMessage, payload)
+        });
+        ipcMain.on(consts.eventNames.ipcEventMessageCallback, (event, arg) => {
+            let payload = {message: arg.message};
+            if (typeof arg.callbackId !== "undefined") payload.callbackId = arg.callbackId;
+            client.write(arg.targetID, consts.eventNames.windowEventMessageCallback, payload)
+        });
+    }
 
     // Read from client
     rl.on('line', function(line){
@@ -305,6 +305,8 @@ function onReady () {
             notification: Notification.isSupported()
         }
     })
+
+    didReady = true;
 };
 
 // start begins listening to go-astilectron.
