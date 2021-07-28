@@ -32,6 +32,7 @@ function onReady () {
     Menu.setApplicationMenu(null)
 
     if (!didReady) {
+        didReady = true
         // Listen to screen events
         screen.on('display-added', function() {
             client.write(consts.targetIds.app, consts.eventNames.displayEventAdded, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
@@ -305,27 +306,20 @@ function onReady () {
             notification: Notification.isSupported()
         }
     })
-
-    didReady = true;
 };
 
 // start begins listening to go-astilectron.
 function start(address = process.argv[2]) {
     client.init(address, function () {
-        if (didReady) {
-            // Re-signal ready and recreate a new readline interface on the new socket
-            rl = readline.createInterface({ input: client.socket });
+        rl = readline.createInterface({ input: client.socket });
+        if (app.isReady()) {
             onReady();
+        } else {
+            app.on("ready", onReady);
         }
     });
-    rl = readline.createInterface({ input: client.socket });
 
     app.on("before-quit", beforeQuit);
-    if (app.isReady()) {
-        onReady();
-    } else {
-        app.on("ready", onReady);
-    }
     app.on("window-all-closed", app.quit);
 }
 
