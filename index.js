@@ -311,14 +311,13 @@ function onReady () {
 
 // start begins listening to go-astilectron.
 function start(address = process.argv[2]) {
-    client.init(address);
-    client.connectionListener = function () {
+    client.init(address, function () {
         if (didReady) {
             // Re-signal ready and recreate a new readline interface on the new socket
             rl = readline.createInterface({ input: client.socket });
             onReady();
         }
-    }
+    });
     rl = readline.createInterface({ input: client.socket });
 
     app.on("before-quit", beforeQuit);
