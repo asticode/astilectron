@@ -64,267 +64,268 @@ function onReady () {
         switch (json.name) {
             // App
             case consts.eventNames.appCmdQuit:
-            app.quit();
-            break;
+                app.quit();
+                break;
 
             // Dock
             case consts.eventNames.dockCmdBounce:
-            let id = 0;
-            if (typeof app.dock !== "undefined") {
-                id = app.dock.bounce(json.bounceType);
-            }
-            client.write(consts.targetIds.dock, consts.eventNames.dockEventBouncing, {id: id});
-            break;
+                let id = 0;
+                if (typeof app.dock !== "undefined") {
+                    id = app.dock.bounce(json.bounceType);
+                }
+                client.write(consts.targetIds.dock, consts.eventNames.dockEventBouncing, {id: id});
+                break;
             case consts.eventNames.dockCmdBounceDownloads:
-            if (typeof app.dock !== "undefined") {
-                app.dock.downloadFinished(json.filePath);
-            }
-            client.write(consts.targetIds.dock, consts.eventNames.dockEventDownloadsBouncing);
-            break;
+                if (typeof app.dock !== "undefined") {
+                    app.dock.downloadFinished(json.filePath);
+                }
+                client.write(consts.targetIds.dock, consts.eventNames.dockEventDownloadsBouncing);
+                break;
             case consts.eventNames.dockCmdCancelBounce:
-            if (typeof app.dock !== "undefined") {
-                app.dock.cancelBounce(json.id);
-            }
-            client.write(consts.targetIds.dock, consts.eventNames.dockEventBouncingCancelled);
-            break;
+                if (typeof app.dock !== "undefined") {
+                    app.dock.cancelBounce(json.id);
+                }
+                client.write(consts.targetIds.dock, consts.eventNames.dockEventBouncingCancelled);
+                break;
             case consts.eventNames.dockCmdHide:
-            if (typeof app.dock !== "undefined") {
-                app.dock.hide();
-            }
-            client.write(consts.targetIds.dock, consts.eventNames.dockEventHidden);
-            break;
+                if (typeof app.dock !== "undefined") {
+                    app.dock.hide();
+                }
+                client.write(consts.targetIds.dock, consts.eventNames.dockEventHidden);
+                break;
             case consts.eventNames.dockCmdSetBadge:
-            if (typeof app.dock !== "undefined") {
-                app.dock.setBadge(json.badge);
-            }
-            client.write(consts.targetIds.dock, consts.eventNames.dockEventBadgeSet);
-            break;
+                if (typeof app.dock !== "undefined") {
+                    app.dock.setBadge(json.badge);
+                }
+                client.write(consts.targetIds.dock, consts.eventNames.dockEventBadgeSet);
+                break;
             case consts.eventNames.dockCmdSetIcon:
-            if (typeof app.dock !== "undefined") {
-                app.dock.setIcon(json.image);
-            }
-            client.write(consts.targetIds.dock, consts.eventNames.dockEventIconSet);
-            break;
+                if (typeof app.dock !== "undefined") {
+                    app.dock.setIcon(json.image);
+                }
+                client.write(consts.targetIds.dock, consts.eventNames.dockEventIconSet);
+                break;
             case consts.eventNames.dockCmdShow:
-            if (typeof app.dock !== "undefined") {
-                app.dock.show();
-            }
-            client.write(consts.targetIds.dock, consts.eventNames.dockEventShown);
-            break;
+                if (typeof app.dock !== "undefined") {
+                    app.dock.show();
+                }
+                client.write(consts.targetIds.dock, consts.eventNames.dockEventShown);
+                break;
 
             // Menu
             case consts.eventNames.menuCmdCreate:
-            menuCreate(json.menu)
-            menus[json.menu.rootId] = json.targetID
-            setMenu(json.menu.rootId)
-            client.write(json.targetID, consts.eventNames.menuEventCreated)
-            break;
-            case consts.eventNames.menuCmdDestroy:
-            elements[json.targetID] = null
-            if (menus[json.menu.rootId] === json.targetID) {
-                menus[json.menu.rootId] = null
+                menuCreate(json.menu)
+                menus[json.menu.rootId] = json.targetID
                 setMenu(json.menu.rootId)
-            }
-            client.write(json.targetID, consts.eventNames.menuEventDestroyed)
-            break;
+                client.write(json.targetID, consts.eventNames.menuEventCreated)
+                break;
+            case consts.eventNames.menuCmdDestroy:
+                elements[json.targetID] = null
+                if (menus[json.menu.rootId] === json.targetID) {
+                    menus[json.menu.rootId] = null
+                    setMenu(json.menu.rootId)
+                }
+                client.write(json.targetID, consts.eventNames.menuEventDestroyed)
+                break;
 
             // Menu item
             case consts.eventNames.menuItemCmdSetChecked:
-            elements[json.targetID].checked = json.menuItemOptions.checked
-            client.write(json.targetID, consts.eventNames.menuItemEventCheckedSet)
-            break;
+                elements[json.targetID].checked = json.menuItemOptions.checked
+                client.write(json.targetID, consts.eventNames.menuItemEventCheckedSet)
+                break;
             case consts.eventNames.menuItemCmdSetEnabled:
-            elements[json.targetID].enabled = json.menuItemOptions.enabled
-            client.write(json.targetID, consts.eventNames.menuItemEventEnabledSet)
-            break;
+                elements[json.targetID].enabled = json.menuItemOptions.enabled
+                client.write(json.targetID, consts.eventNames.menuItemEventEnabledSet)
+                break;
             case consts.eventNames.menuItemCmdSetLabel:
-            elements[json.targetID].label = json.menuItemOptions.label
-            client.write(json.targetID, consts.eventNames.menuItemEventLabelSet)
-            break;
+                elements[json.targetID].label = json.menuItemOptions.label
+                client.write(json.targetID, consts.eventNames.menuItemEventLabelSet)
+                break;
             case consts.eventNames.menuItemCmdSetVisible:
-            elements[json.targetID].visible = json.menuItemOptions.visible
-            client.write(json.targetID, consts.eventNames.menuItemEventVisibleSet)
-            break;
+                elements[json.targetID].visible = json.menuItemOptions.visible
+                client.write(json.targetID, consts.eventNames.menuItemEventVisibleSet)
+                break;
 
             // Notification
             case consts.eventNames.notificationCmdCreate:
-            notificationCreate(json);
-            break;
+                notificationCreate(json);
+                break;
             case consts.eventNames.notificationCmdShow:
-            if (Notification.isSupported()) {
-                elements[json.targetID].show();
-            }
-            break;
+                if (Notification.isSupported()) {
+                    elements[json.targetID].show();
+                }
+                break;
 
             // Session
             case consts.eventNames.sessionCmdClearCache:
-            elements[json.targetID].clearCache().then(() => {
-                client.write(json.targetID, consts.eventNames.sessionEventClearedCache)
-            })
-            break;
+                elements[json.targetID].clearCache().then(() => {
+                    client.write(json.targetID, consts.eventNames.sessionEventClearedCache)
+                })
+                break;
             case consts.eventNames.sessionCmdFlushStorage:
-            elements[json.targetID].flushStorageData();
-            client.write(json.targetID, consts.eventNames.sessionEventFlushedStorage)
-            break;
+                elements[json.targetID].flushStorageData();
+                client.write(json.targetID, consts.eventNames.sessionEventFlushedStorage)
+                break;
             case consts.eventNames.sessionCmdSetCookies:
-              for (const c of json.cookies) {
-                elements[json.targetID].cookies.set(c);
-              }
+                for (const c of json.cookies) {
+                    elements[json.targetID].cookies.set(c);
+                }
 
-              client.write(json.targetID, consts.eventNames.sessionEventCookiesSet)
-              break;
+                client.write(json.targetID, consts.eventNames.sessionEventCookiesSet)
+                break;
             case consts.eventNames.sessionCmdGetCookies:
-              elements[json.targetID].cookies.get({}).then((cookies) => {
-                client.write(json.targetID, consts.eventNames.sessionEventCookiesGet, cookies);
-              })
-              break;
+                elements[json.targetID].cookies.get({}).then((cookies) => {
+                    client.write(json.targetID, consts.eventNames.sessionEventCookiesGet, cookies);
+                })
+                break;
 
 
             // Sub menu
             case consts.eventNames.subMenuCmdAppend:
-            elements[json.targetID].append(menuItemCreate(json.menuItem))
-            setMenu(json.menuItem.rootId)
-            client.write(json.targetID, consts.eventNames.subMenuEventAppended)
-            break;
+                elements[json.targetID].append(menuItemCreate(json.menuItem))
+                setMenu(json.menuItem.rootId)
+                client.write(json.targetID, consts.eventNames.subMenuEventAppended)
+                break;
             case consts.eventNames.subMenuCmdClosePopup:
-            window = null
-            if (typeof json.windowId !== "undefined") {
-                window = elements[json.windowId]
-            }
-            elements[json.targetID].closePopup(window)
-            client.write(json.targetID, consts.eventNames.subMenuEventClosedPopup)
-            break;
+                window = null
+                if (typeof json.windowId !== "undefined") {
+                    window = elements[json.windowId]
+                }
+                elements[json.targetID].closePopup(window)
+                client.write(json.targetID, consts.eventNames.subMenuEventClosedPopup)
+                break;
             case consts.eventNames.subMenuCmdInsert:
-            elements[json.targetID].insert(json.menuItemPosition, menuItemCreate(json.menuItem))
-            setMenu(json.menuItem.rootId)
-            client.write(json.targetID, consts.eventNames.subMenuEventInserted)
-            break;
+                elements[json.targetID].insert(json.menuItemPosition, menuItemCreate(json.menuItem))
+                setMenu(json.menuItem.rootId)
+                client.write(json.targetID, consts.eventNames.subMenuEventInserted)
+                break;
             case consts.eventNames.subMenuCmdPopup:
-            window = null
-            if (typeof json.windowId !== "undefined") {
-                window = elements[json.windowId]
-            }
-            json.menuPopupOptions.async = true
-            elements[json.targetID].popup(window, json.menuPopupOptions)
-            client.write(json.targetID, consts.eventNames.subMenuEventPoppedUp)
-            break;
+                window = null
+                if (typeof json.windowId !== "undefined") {
+                    window = elements[json.windowId]
+                }
+                json.menuPopupOptions.async = true
+                elements[json.targetID].popup(window, json.menuPopupOptions)
+                client.write(json.targetID, consts.eventNames.subMenuEventPoppedUp)
+                break;
 
             // Tray
             case consts.eventNames.trayCmdCreate:
-              trayCreate(json)
-              break;
+                trayCreate(json)
+                break;
             case consts.eventNames.trayCmdDestroy:
-              elements[json.targetID].destroy()
-              elements[json.targetID] = null
-              client.write(json.targetID, consts.eventNames.trayEventDestroyed)
-              break;
+                elements[json.targetID].destroy()
+                elements[json.targetID] = null
+                client.write(json.targetID, consts.eventNames.trayEventDestroyed)
+                break;
             case consts.eventNames.trayCmdSetImage:
-              elements[json.targetID].setImage(json.image);
-              client.write(json.targetID, consts.eventNames.trayEventImageSet)
-              break;
+                elements[json.targetID].setImage(json.image);
+                client.write(json.targetID, consts.eventNames.trayEventImageSet)
+                break;
 
             // Web contents
             case consts.eventNames.webContentsEventLoginCallback:
-              executeCallback(consts.callbackNames.webContentsLogin, json, [json.username, json.password]);
-              break;
+                executeCallback(consts.callbackNames.webContentsLogin, json, [json.username, json.password]);
+                break;
             case consts.eventNames.webContentsEventInterceptStringProtocolCallback:
-              executeCallback(consts.callbackNames.webContentsInterceptStringProtocol, json, {mimeType: json.mimeType, data: json.data}, false);
-              break;
+                executeCallback(consts.callbackNames.webContentsInterceptStringProtocol, json, {mimeType: json.mimeType, data: json.data}, false);
+                break;
             case consts.eventNames.webContentsSessionWebRequestOnBeforeRequestCallback:
-              executeCallback(consts.callbackNames.webContentsOnBeforeRequest, json, {mimeType: json.mimeType, data: json.data}, false);
-              break;
+                executeCallback(consts.callbackNames.webContentsOnBeforeRequest, json, {cancel: json.cancel, redirectURL: json.redirectURL}, false);
+                break;
 
             // Window
             case consts.eventNames.windowCmdBlur:
-            elements[json.targetID].blur()
-            break;
+                elements[json.targetID].blur()
+                break;
             case consts.eventNames.windowCmdCenter:
-            elements[json.targetID].center()
-            break;
+                elements[json.targetID].center()
+                break;
             case consts.eventNames.windowCmdClose:
-            elements[json.targetID].close()
-            break;
+                elements[json.targetID].close()
+                break;
             case consts.eventNames.windowCmdCreate:
-            windowCreate(json)
-            break;
+                windowCreate(json)
+                break;
             case consts.eventNames.windowCmdDestroy:
-            elements[json.targetID].destroy()
-            elements[json.targetID] = null
-            break;
+                elements[json.targetID].destroy()
+                elements[json.targetID] = null
+                break;
             case consts.eventNames.windowCmdFocus:
-            elements[json.targetID].focus()
-            break;
+                elements[json.targetID].focus()
+                break;
             case consts.eventNames.windowCmdHide:
-            elements[json.targetID].hide()
-            break;
+                elements[json.targetID].hide()
+                break;
             case consts.eventNames.windowCmdLog:
-            elements[json.targetID].webContents.send(consts.eventNames.ipcCmdLog, json.message)
-            break;
+                elements[json.targetID].webContents.send(consts.eventNames.ipcCmdLog, json.message)
+                break;
             case consts.eventNames.windowCmdMaximize:
-            elements[json.targetID].maximize()
-            break;
+                elements[json.targetID].maximize()
+                break;
             case consts.eventNames.windowCmdMessage:
             case consts.eventNames.windowCmdMessageCallback:
-            let m = {message: json.message}
-            if (typeof json.callbackId !== "undefined") m.callbackId = json.callbackId
-            elements[json.targetID].webContents.send(json.name === consts.eventNames.windowCmdMessageCallback ? consts.eventNames.ipcCmdMessageCallback : consts.eventNames.ipcCmdMessage, m)
-            break;
+                let m = {message: json.message}
+                if (typeof json.callbackId !== "undefined") m.callbackId = json.callbackId
+                elements[json.targetID].webContents.send(json.name === consts.eventNames.windowCmdMessageCallback ? consts.eventNames.ipcCmdMessageCallback : consts.eventNames.ipcCmdMessage, m)
+                break;
             case consts.eventNames.windowCmdMinimize:
-            elements[json.targetID].minimize()
-            break;
+                elements[json.targetID].minimize()
+                break;
             case consts.eventNames.windowCmdMove:
-            elements[json.targetID].setPosition(json.windowOptions.x, json.windowOptions.y, true)
-            break;
+                elements[json.targetID].setPosition(json.windowOptions.x, json.windowOptions.y, true)
+                break;
             case consts.eventNames.windowCmdResize:
-            elements[json.targetID].setSize(json.windowOptions.width, json.windowOptions.height, true)
-            break;
+                elements[json.targetID].setSize(json.windowOptions.width, json.windowOptions.height, true)
+                break;
             case consts.eventNames.windowCmdSetBounds:
-            elements[json.targetID].setBounds(json.bounds, true);
-            break;
+                elements[json.targetID].setBounds(json.bounds, true);
+                break;
             case consts.eventNames.windowCmdRestore:
-            elements[json.targetID].restore()
-            break;
+                elements[json.targetID].restore()
+                break;
             case consts.eventNames.windowCmdShow:
-            elements[json.targetID].show()
-            break;
+                elements[json.targetID].show()
+                break;
             case consts.eventNames.windowCmdLoadUrl:
-            elements[json.targetID].loadURL(json.url, {}).then(() => {
-                client.write(json.targetID, consts.eventNames.windowEventLoadedUrl);
-            });
-            break;
+                elements[json.targetID].loadURL(json.url, {}).then(() => {
+                    client.write(json.targetID, consts.eventNames.windowEventLoadedUrl);
+                });
+                break;
             case consts.eventNames.windowCmdWebContentsInterceptStringProtocol:
-              elements[json.targetID].webContents.session.protocol.interceptStringProtocol("http", (r, cb) => {
-                  registerCallback(json, consts.callbackNames.webContentsInterceptStringProtocol, {r}, consts.eventNames.webContentsEventInterceptStringProtocol, cb);
-              });
-              client.write(json.targetID, consts.eventNames.windowEventWebContentsInterceptStringProtocol);
-              break;
+                elements[json.targetID].webContents.session.protocol.interceptStringProtocol("http", (r, cb) => {
+                    registerCallback(json, consts.callbackNames.webContentsInterceptStringProtocol, {r}, consts.eventNames.webContentsEventInterceptStringProtocol, cb);
+                });
+                client.write(json.targetID, consts.eventNames.windowEventWebContentsInterceptStringProtocol);
+                break;
             case consts.eventNames.webContentsSessionWebRequestOnBeforeRequest:
-              elements[json.targetID].webContents.session.webRequest.onBeforeRequest([], (r, cb) => {
-                registerCallback(json, consts.callbackNames.webContentsOnBeforeRequest, {r}, consts.eventNames.webContentsSessionWebRequestOnBeforeRequest, cb);
-              });
-              client.write(json.targetID, consts.eventNames.windowEventWebContentsOnBeforeRequest);
-              break;
+                console.log('yup');
+                elements[json.targetID].webRequest.onBeforeRequest((r, cb) => {
+                    registerCallback(json, consts.callbackNames.webContentsOnBeforeRequest, {r}, consts.eventNames.webContentsSessionWebRequestOnBeforeRequest, cb);
+                });
+                client.write(json.targetID, consts.eventNames.windowEventWebContentsOnBeforeRequest);
+                break;
             case consts.eventNames.windowCmdWebContentsCloseDevTools:
-            elements[json.targetID].webContents.closeDevTools()
-            break;
+                elements[json.targetID].webContents.closeDevTools()
+                break;
             case consts.eventNames.windowCmdWebContentsOpenDevTools:
-            elements[json.targetID].webContents.openDevTools()
-            break;
+                elements[json.targetID].webContents.openDevTools()
+                break;
             case consts.eventNames.windowCmdUnmaximize:
-            elements[json.targetID].unmaximize()
-            break;
+                elements[json.targetID].unmaximize()
+                break;
             case consts.eventNames.windowCmdUpdateCustomOptions:
-            client.write(json.targetID, consts.eventNames.windowEventUpdatedCustomOptions, json.windowOptions);
-            break;
+                client.write(json.targetID, consts.eventNames.windowEventUpdatedCustomOptions, json.windowOptions);
+                break;
             case consts.eventNames.windowCmdWebContentsExecuteJavascript:
-            elements[json.targetID].webContents.executeJavaScript(json.code)
-                .then(() => client.write(json.targetID, consts.eventNames.windowEventWebContentsExecutedJavaScript));
-            break;
+                elements[json.targetID].webContents.executeJavaScript(json.code)
+                    .then(() => client.write(json.targetID, consts.eventNames.windowEventWebContentsExecutedJavaScript));
+                break;
             case consts.eventNames.windowCmdWebContentsSetProxy:
-            elements[json.targetID].webContents.session.clearAuthCache().then(() => {
-                elements[json.targetID].webContents.session.setProxy(json.proxy)
-                    .then(() => client.write(json.targetID, consts.eventNames.windowEventWebContentsSetProxy));
-            });
+                elements[json.targetID].webContents.session.clearAuthCache().then(() => {
+                    elements[json.targetID].webContents.session.setProxy(json.proxy)
+                        .then(() => client.write(json.targetID, consts.eventNames.windowEventWebContentsSetProxy));
+                });
         }
     });
 
@@ -581,13 +582,13 @@ function registerCallback(json, k, e, n, c) {
 }
 
 function executeCallback(k, json, args, apply = true) {
-  if (typeof callbacks[k][json.callbackId] !== "undefined") {
-    if (apply) {
-        callbacks[k][json.callbackId].apply(null, args);
-    } else {
-        callbacks[k][json.callbackId](args);
+    if (typeof callbacks[k][json.callbackId] !== "undefined") {
+        if (apply) {
+            callbacks[k][json.callbackId].apply(null, args);
+        } else {
+            callbacks[k][json.callbackId](args);
+        }
     }
-  }
 }
 
 function sessionCreate(webContents, sessionId) {
@@ -601,8 +602,8 @@ function getLastWindow() {
 }
 
 module.exports = {
-  getLastWindow,
-  start,
-  client,
-  consts
+    getLastWindow,
+    start,
+    client,
+    consts
 }
