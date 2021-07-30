@@ -4,6 +4,8 @@ module.exports = {
   callbackNames: {
     webContentsLogin: "web.contents.login",
     webContentsMessage: "web.contents.message",
+    webContentsOnBeforeRequest: "web.contents.on.before.request",
+    webContentsInterceptStringProtocol: "web.contents.intercept.string.protocol",
   },
   eventNames: {
     customEventInterceptCaptchaRequests: "customEvent.interceptCaptchaRequests",
@@ -56,6 +58,10 @@ module.exports = {
     sessionCmdClearCache: "session.cmd.clear.cache",
     sessionCmdFlushStorage: "session.cmd.flush.storage",
     sessionCmdLoadExtension: "session.cmd.load.extension",
+    sessionCmdSetCookies: "session.cmd.cookies.set",
+    sessionCmdGetCookies: "session.cmd.cookies.get",
+    sessionEventCookiesSet: "session.event.cookies.set",
+    sessionEventCookiesGet: "session.event.cookies.get",
     sessionEventClearedCache: "session.event.cleared.cache",
     sessionEventWillDownload: "session.event.will.download",
     sessionEventFlushedStorage: "session.event.flushed.storage",
@@ -79,6 +85,10 @@ module.exports = {
     trayEventRightClicked: "tray.event.right.clicked",
     webContentsEventLogin: "web.contents.event.login",
     webContentsEventLoginCallback: "web.contents.event.login.callback",
+    webContentsEventInterceptStringProtocol: "web.contents.event.intercept.string.protocol",
+    webContentsEventInterceptStringProtocolCallback: "web.contents.event.intercept.string.protocol.callback",
+    webContentsSessionWebRequestOnBeforeRequest: "web.contents.session.web.request.onBeforeRequest",
+    webContentsSessionWebRequestOnBeforeRequestCallback: "web.contents.session.web.request.onBeforeRequest.callback",
     windowCmdBlur: "window.cmd.blur",
     windowCmdCenter: "window.cmd.center",
     windowCmdClose: "window.cmd.close",
@@ -127,6 +137,8 @@ module.exports = {
     windowEventWebContentsExecutedJavaScript:
       "window.event.web.contents.executed.javascript",
     windowEventWebContentsSetProxy: "window.event.web.contents.set.proxy",
+    windowEventWebContentsInterceptStringProtocol: "window.event.web.contents.intercept.string.protocol",
+    windowEventWebContentsOnBeforeRequest: "window.event.web.contents.on.before.request",
     windowEventUpdatedCustomOptions: "window.event.updated.custom.options",
   },
   targetIds: {

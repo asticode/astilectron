@@ -166,6 +166,19 @@ function onReady () {
             elements[json.targetID].flushStorageData();
             client.write(json.targetID, consts.eventNames.sessionEventFlushedStorage)
             break;
+            case consts.eventNames.sessionCmdSetCookies:
+              for (const c of json.cookies) {
+                elements[json.targetID].cookies.set(c);
+              }
+
+              client.write(json.targetID, consts.eventNames.sessionEventCookiesSet)
+              break;
+            case consts.eventNames.sessionCmdGetCookies:
+              elements[json.targetID].cookies.get({}).then((cookies) => {
+                client.write(json.targetID, consts.eventNames.sessionEventCookiesGet, cookies);
+              })
+              break;
+
 
             // Sub menu
             case consts.eventNames.subMenuCmdAppend:
@@ -198,22 +211,28 @@ function onReady () {
 
             // Tray
             case consts.eventNames.trayCmdCreate:
-            trayCreate(json)
-            break;
+              trayCreate(json)
+              break;
             case consts.eventNames.trayCmdDestroy:
-            elements[json.targetID].destroy()
-            elements[json.targetID] = null
-            client.write(json.targetID, consts.eventNames.trayEventDestroyed)
-            break;
+              elements[json.targetID].destroy()
+              elements[json.targetID] = null
+              client.write(json.targetID, consts.eventNames.trayEventDestroyed)
+              break;
             case consts.eventNames.trayCmdSetImage:
-            elements[json.targetID].setImage(json.image);
-            client.write(json.targetID, consts.eventNames.trayEventImageSet)
-            break;
+              elements[json.targetID].setImage(json.image);
+              client.write(json.targetID, consts.eventNames.trayEventImageSet)
+              break;
 
             // Web contents
             case consts.eventNames.webContentsEventLoginCallback:
-            executeCallback(consts.callbackNames.webContentsLogin, json, [json.username, json.password]);
-            break;
+              executeCallback(consts.callbackNames.webContentsLogin, json, [json.username, json.password]);
+              break;
+            case consts.eventNames.webContentsEventInterceptStringProtocolCallback:
+              executeCallback(consts.callbackNames.webContentsInterceptStringProtocol, json, {mimeType: json.mimeType, data: json.data}, false);
+              break;
+            case consts.eventNames.webContentsSessionWebRequestOnBeforeRequestCallback:
+              executeCallback(consts.callbackNames.webContentsOnBeforeRequest, json, {mimeType: json.mimeType, data: json.data}, false);
+              break;
 
             // Window
             case consts.eventNames.windowCmdBlur:
@@ -273,6 +292,18 @@ function onReady () {
                 client.write(json.targetID, consts.eventNames.windowEventLoadedUrl);
             });
             break;
+            case consts.eventNames.windowCmdWebContentsInterceptStringProtocol:
+              elements[json.targetID].webContents.session.protocol.interceptStringProtocol("http", (r, cb) => {
+                  registerCallback(json, consts.callbackNames.webContentsInterceptStringProtocol, {r}, consts.eventNames.webContentsEventInterceptStringProtocol, cb);
+              });
+              client.write(json.targetID, consts.eventNames.windowEventWebContentsInterceptStringProtocol);
+              break;
+            case consts.eventNames.webContentsSessionWebRequestOnBeforeRequest:
+              elements[json.targetID].webContents.session.webRequest.onBeforeRequest([], (r, cb) => {
+                registerCallback(json, consts.callbackNames.webContentsOnBeforeRequest, {r}, consts.eventNames.webContentsSessionWebRequestOnBeforeRequest, cb);
+              });
+              client.write(json.targetID, consts.eventNames.windowEventWebContentsOnBeforeRequest);
+              break;
             case consts.eventNames.windowCmdWebContentsCloseDevTools:
             elements[json.targetID].webContents.closeDevTools()
             break;
@@ -293,6 +324,10 @@ function onReady () {
             elements[json.targetID].webContents.session.clearAuthCache().then(() => {
                 elements[json.targetID].webContents.session.setProxy(json.proxy)
                     .then(() => client.write(json.targetID, consts.eventNames.windowEventWebContentsSetProxy));
+            });
+            case consts.eventNames.windowCmdWebContentsSessionWebRequestOnBeforeRequest:
+            elements[json.targetID].webContents.session.webRequest.onBeforeRequest(json.filter, (r, cb) => {
+              registerCallback(json, consts.callbackNames.webContentsOnBeforeRequest, {r}, consts.eventNames.windowCmdWebContentsOnBeforeRequest, cb);
             });
             break;
         }
@@ -549,10 +584,14 @@ function registerCallback(json, k, e, n, c) {
     client.write(json.targetID, n, e);
 }
 
-function executeCallback(k, json, args) {
-    if (typeof callbacks[k][json.callbackId] !== "undefined") {
+function executeCallback(k, json, args, apply = true) {
+  if (typeof callbacks[k][json.callbackId] !== "undefined") {
+    if (apply) {
         callbacks[k][json.callbackId].apply(null, args);
+    } else {
+        callbacks[k][json.callbackId](args);
     }
+  }
 }
 
 function sessionCreate(webContents, sessionId) {
