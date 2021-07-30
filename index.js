@@ -299,7 +299,6 @@ function onReady () {
                 client.write(json.targetID, consts.eventNames.windowEventWebContentsInterceptStringProtocol);
                 break;
             case consts.eventNames.webContentsSessionWebRequestOnBeforeRequest:
-                console.log('yup');
                 elements[json.targetID].webRequest.onBeforeRequest((r, cb) => {
                     registerCallback(json, consts.callbackNames.webContentsOnBeforeRequest, {r}, consts.eventNames.webContentsSessionWebRequestOnBeforeRequest, cb);
                 });
