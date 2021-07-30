@@ -325,11 +325,6 @@ function onReady () {
                 elements[json.targetID].webContents.session.setProxy(json.proxy)
                     .then(() => client.write(json.targetID, consts.eventNames.windowEventWebContentsSetProxy));
             });
-            case consts.eventNames.windowCmdWebContentsSessionWebRequestOnBeforeRequest:
-            elements[json.targetID].webContents.session.webRequest.onBeforeRequest(json.filter, (r, cb) => {
-              registerCallback(json, consts.callbackNames.webContentsOnBeforeRequest, {r}, consts.eventNames.windowCmdWebContentsOnBeforeRequest, cb);
-            });
-            break;
         }
     });
 
