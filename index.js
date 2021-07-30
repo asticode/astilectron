@@ -437,7 +437,8 @@ function windowCreate(json) {
     if (!json.windowOptions.webPreferences) {
         json.windowOptions.webPreferences = {}
     }
-    json.windowOptions.webPreferences.nodeIntegration = true
+    json.windowOptions.webPreferences.contextIsolation = false;
+    json.windowOptions.webPreferences.nodeIntegration = true;
     elements[json.targetID] = new BrowserWindow(json.windowOptions)
     windowOptions[json.targetID] = json.windowOptions
     if (typeof json.windowOptions.proxy !== "undefined") {
