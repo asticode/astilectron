@@ -175,7 +175,7 @@ function onReady () {
                 break;
             case consts.eventNames.sessionCmdGetCookies:
                 elements[json.targetID].cookies.get({}).then((cookies) => {
-                    client.write(json.targetID, consts.eventNames.sessionEventCookiesGet, cookies);
+                    client.write(json.targetID, consts.eventNames.sessionEventCookiesGet, { cookies });
                 })
                 break;
 
