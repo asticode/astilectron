@@ -5,10 +5,8 @@ module.exports = {
     webContentsLogin: "web.contents.login",
     webContentsMessage: "web.contents.message",
     webContentsOnBeforeRequest: "web.contents.on.before.request",
-    webContentsInterceptStringProtocol: "web.contents.intercept.string.protocol",
   },
   eventNames: {
-    customEventInterceptCaptchaRequests: "customEvent.interceptCaptchaRequests",
     appCmdQuit: "app.cmd.quit",
     appEventReady: "app.event.ready",
     appEventSecondInstance: "app.event.second.instance",
@@ -66,6 +64,10 @@ module.exports = {
     sessionEventWillDownload: "session.event.will.download",
     sessionEventFlushedStorage: "session.event.flushed.storage",
     sessionEventLoadedExtension: "session.event.loaded.extension",
+    protocolEventInterceptStringProtocol:
+      "protocol.event.intercept.string.protocol",
+    protocolEventInterceptStringProtocolCallback:
+      "protocol.event.intercept.string.protocol.callback",
     subMenuCmdAppend: "sub.menu.cmd.append",
     subMenuCmdClosePopup: "sub.menu.cmd.close.popup",
     subMenuCmdInsert: "sub.menu.cmd.insert",
@@ -85,10 +87,10 @@ module.exports = {
     trayEventRightClicked: "tray.event.right.clicked",
     webContentsEventLogin: "web.contents.event.login",
     webContentsEventLoginCallback: "web.contents.event.login.callback",
-    webContentsEventInterceptStringProtocol: "web.contents.event.intercept.string.protocol",
-    webContentsEventInterceptStringProtocolCallback: "web.contents.event.intercept.string.protocol.callback",
-    webContentsSessionWebRequestOnBeforeRequest: "web.contents.event.session.web.request.on.before.request",
-    webContentsSessionWebRequestOnBeforeRequestCallback: "web.contents.event.session.web.request.on.before.request.callback",
+    webContentsSessionWebRequestOnBeforeRequest:
+      "web.contents.event.session.web.request.on.before.request",
+    webContentsSessionWebRequestOnBeforeRequestCallback:
+      "web.contents.event.session.web.request.on.before.request.callback",
     windowCmdBlur: "window.cmd.blur",
     windowCmdCenter: "window.cmd.center",
     windowCmdClose: "window.cmd.close",
@@ -137,8 +139,8 @@ module.exports = {
     windowEventWebContentsExecutedJavaScript:
       "window.event.web.contents.executed.javascript",
     windowEventWebContentsSetProxy: "window.event.web.contents.set.proxy",
-    windowEventWebContentsInterceptStringProtocol: "window.event.web.contents.intercept.string.protocol",
-    windowEventWebContentsOnBeforeRequest: "window.event.web.contents.on.before.request",
+    windowEventWebContentsOnBeforeRequest:
+      "window.event.web.contents.on.before.request",
     windowEventUpdatedCustomOptions: "window.event.updated.custom.options",
   },
   targetIds: {
