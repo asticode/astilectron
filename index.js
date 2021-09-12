@@ -273,6 +273,10 @@ function onReady () {
             case consts.eventNames.windowCmdShow:
             elements[json.targetID].show()
             break;
+            case consts.eventNames.windowCmdSetContentProtection:
+            elements[json.targetID].setContentProtection(json.enable ? json.enable : false)
+            client.write(json.targetID, consts.eventNames.windowEventContentProtectionSet)
+            break;
             case consts.eventNames.windowCmdWebContentsCloseDevTools:
             elements[json.targetID].webContents.closeDevTools()
             break;
