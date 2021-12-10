@@ -170,7 +170,7 @@ function onReady () {
                 client.write(json.targetID, consts.eventNames.sessionEventLoadedExtension)
             })
             break;
-                
+
             // Sub menu
             case consts.eventNames.subMenuCmdAppend:
             elements[json.targetID].append(menuItemCreate(json.menuItem))
@@ -263,6 +263,9 @@ function onReady () {
             break;
             case consts.eventNames.windowCmdResize:
             elements[json.targetID].setSize(json.windowOptions.width, json.windowOptions.height, true)
+            break;
+            case consts.eventNames.windowCmdResizeContent:
+            elements[json.targetID].setContentSize(json.windowOptions.width, json.windowOptions.height, true)
             break;
             case consts.eventNames.windowCmdSetBounds:
             elements[json.targetID].setBounds(json.bounds, true);
@@ -453,6 +456,7 @@ function windowCreateFinish(json) {
     elements[json.targetID].on('move', () => { client.write(json.targetID, consts.eventNames.windowEventMove) })
     elements[json.targetID].on('ready-to-show', () => { client.write(json.targetID, consts.eventNames.windowEventReadyToShow) })
     elements[json.targetID].on('resize', () => { client.write(json.targetID, consts.eventNames.windowEventResize) })
+    elements[json.targetID].on('resize-content', () => { client.write(json.targetID, consts.eventNames.windowEventResizeContent) })
     elements[json.targetID].on('restore', () => { client.write(json.targetID, consts.eventNames.windowEventRestore) })
     elements[json.targetID].on('show', () => { client.write(json.targetID, consts.eventNames.windowEventShow) })
     elements[json.targetID].on('unmaximize', () => { client.write(json.targetID, consts.eventNames.windowEventUnmaximize) })
