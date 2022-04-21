@@ -267,6 +267,10 @@ function onReady () {
             case consts.eventNames.windowCmdResizeContent:
             elements[json.targetID].setContentSize(json.windowOptions.width, json.windowOptions.height, true)
             break;
+            case consts.eventNames.windowCmdSetAlwaysOnTop:
+            elements[json.targetID].setAlwaysOnTop(json.enable ? json.enable : false)
+            client.write(json.targetID, consts.eventNames.windowEventAlwaysOnTopChanged)
+            break;
             case consts.eventNames.windowCmdSetBounds:
             elements[json.targetID].setBounds(json.bounds, true);
             break;
