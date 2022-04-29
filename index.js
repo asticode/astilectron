@@ -542,7 +542,8 @@ function windowCreateFinish(json) {
             document.dispatchEvent(new Event('astilectron-ready'))`
         )
         sessionCreate(elements[json.targetID].webContents, json.sessionId)
-        client.write(json.targetID, consts.eventNames.windowEventDidFinishLoad)
+        let bounds = elements[json.targetID].getBounds();
+        client.write(json.targetID, consts.eventNames.windowEventDidFinishLoad, {bounds: bounds})
     })
     elements[json.targetID].webContents.on('did-get-redirect-request', (event, oldUrl, newUrl) => {
         client.write(json.targetID, consts.eventNames.windowEventDidGetRedirectRequest, {
