@@ -117,6 +117,7 @@ module.exports = {
         windowEventMessageCallback: "window.event.message.callback",
         windowEventMinimize: "window.event.minimize",
         windowEventMove: "window.event.move",
+        windowEventMoved: "window.event.moved",
         windowEventReadyToShow: "window.event.ready.to.show",
         windowEventResize: "window.event.resize",
         windowEventResizeContent: "window.event.resize.content",
@@ -125,6 +126,7 @@ module.exports = {
         windowEventUnmaximize: "window.event.unmaximize",
         windowEventUnresponsive: "window.event.unresponsive",
         windowEventWebContentsExecutedJavaScript: "window.event.web.contents.executed.javascript",
+        windowEventWillMove: "window.event.will.move",
         windowEventUpdatedCustomOptions: "window.event.updated.custom.options"
     },
     targetIds: {

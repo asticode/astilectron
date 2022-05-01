@@ -455,16 +455,39 @@ function windowCreateFinish(json) {
     })
     elements[json.targetID].on('focus', () => { client.write(json.targetID, consts.eventNames.windowEventFocus) })
     elements[json.targetID].on('hide', () => { client.write(json.targetID, consts.eventNames.windowEventHide) })
-    elements[json.targetID].on('maximize', () => { client.write(json.targetID, consts.eventNames.windowEventMaximize) })
+    elements[json.targetID].on('maximize', () => {
+        let bounds = elements[json.targetID].getBounds();
+        client.write(json.targetID, consts.eventNames.windowEventMaximize, {bounds: bounds});
+    })
     elements[json.targetID].on('minimize', () => { client.write(json.targetID, consts.eventNames.windowEventMinimize) })
-    elements[json.targetID].on('move', () => { client.write(json.targetID, consts.eventNames.windowEventMove) })
+    elements[json.targetID].on('move', () => {
+        let bounds = elements[json.targetID].getBounds();
+        client.write(json.targetID, consts.eventNames.windowEventMove, {bounds: bounds});
+    })
+    elements[json.targetID].on('moved', () => {
+        let bounds = elements[json.targetID].getBounds();
+        client.write(json.targetID, consts.eventNames.windowEventMoved, {bounds: bounds});
+    })
     elements[json.targetID].on('ready-to-show', () => { client.write(json.targetID, consts.eventNames.windowEventReadyToShow) })
-    elements[json.targetID].on('resize', () => { client.write(json.targetID, consts.eventNames.windowEventResize) })
-    elements[json.targetID].on('resize-content', () => { client.write(json.targetID, consts.eventNames.windowEventResizeContent) })
+    elements[json.targetID].on('resize', () => {
+        let bounds = elements[json.targetID].getBounds();
+        client.write(json.targetID, consts.eventNames.windowEventResize, {bounds: bounds});
+    })
+    elements[json.targetID].on('resize-content', () => {
+        let bounds = elements[json.targetID].getBounds();
+        client.write(json.targetID, consts.eventNames.windowEventResizeContent, {bounds: bounds})
+    })
     elements[json.targetID].on('restore', () => { client.write(json.targetID, consts.eventNames.windowEventRestore) })
     elements[json.targetID].on('show', () => { client.write(json.targetID, consts.eventNames.windowEventShow) })
-    elements[json.targetID].on('unmaximize', () => { client.write(json.targetID, consts.eventNames.windowEventUnmaximize) })
+    elements[json.targetID].on('unmaximize', () => {
+        let bounds = elements[json.targetID].getBounds();
+        client.write(json.targetID, consts.eventNames.windowEventUnmaximize, {bounds: bounds});
+    })
     elements[json.targetID].on('unresponsive', () => { client.write(json.targetID, consts.eventNames.windowEventUnresponsive) })
+    elements[json.targetID].on('will-move', () => {
+        let bounds = elements[json.targetID].getBounds();
+        client.write(json.targetID, consts.eventNames.windowEventWillMove, {bounds: bounds});
+    })
     elements[json.targetID].webContents.on('did-finish-load', () => {
         elements[json.targetID].webContents.executeJavaScript(
             `const {ipcRenderer} = require('electron')
@@ -519,7 +542,8 @@ function windowCreateFinish(json) {
             document.dispatchEvent(new Event('astilectron-ready'))`
         )
         sessionCreate(elements[json.targetID].webContents, json.sessionId)
-        client.write(json.targetID, consts.eventNames.windowEventDidFinishLoad)
+        let bounds = elements[json.targetID].getBounds();
+        client.write(json.targetID, consts.eventNames.windowEventDidFinishLoad, {bounds: bounds})
     })
     elements[json.targetID].webContents.on('did-get-redirect-request', (event, oldUrl, newUrl) => {
         client.write(json.targetID, consts.eventNames.windowEventDidGetRedirectRequest, {
