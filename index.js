@@ -41,6 +41,44 @@ function onReady () {
         client.write(consts.targetIds.app, consts.eventNames.displayEventRemoved, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
     })
 
+    const powerMonitor = electron.powerMonitor
+    // Listen to power events
+    powerMonitor.on('suspend', function() {
+        client.write(consts.targetIds.power, consts.eventNames.powerEventSuspend)
+    })
+
+    powerMonitor.on('resume', function() {
+        client.write(consts.targetIds.power, consts.eventNames.powerEventResume)
+    })
+
+    powerMonitor.on('on-ac', function() {
+        client.write(consts.targetIds.power, consts.eventNames.powerEventOnAC)
+    })
+
+    powerMonitor.on('on-battery', function () {
+        client.write(consts.targetIds.power, consts.eventNames.powerEventOnBattery)
+    })
+
+    powerMonitor.on('shutdown', function() {
+        client.write(consts.targetIds.power, consts.eventNames.powerEventShutdown)
+    })
+
+    powerMonitor.on('lock-screen', function() {
+        client.write(consts.targetIds.power, consts.eventNames.powerEventLockScreen)
+    })
+
+    powerMonitor.on('unlock-screen', function() {
+        client.write(consts.targetIds.power, consts.eventNames.powerEventUnlockScreen)
+    })
+
+    powerMonitor.on('user-did-become-active', function() {
+        client.write(consts.targetIds.power, consts.eventNames.powerEventUserDidBecomeActive)
+    })
+
+    powerMonitor.on('user-did-resign-active', function() {
+        client.write(consts.targetIds.power, consts.eventNames.powerEventUserDidResignActive)
+    })
+
     // Listen on main ipcMain
     ipcMain.on(consts.eventNames.ipcEventMessage, (event, arg) => {
         let payload = {message: arg.message};
