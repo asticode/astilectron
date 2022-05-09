@@ -3,6 +3,7 @@
 
 const electron = require('electron')
 const {app, BrowserWindow, ipcMain, Menu, MenuItem, Tray, dialog, Notification} = electron
+const path = require('path')
 const consts = require('./src/consts.js')
 const client = require('./src/client.js')
 const readline = require('readline')
@@ -53,10 +54,18 @@ function onReady () {
         client.write(arg.targetID, consts.eventNames.windowEventMessageCallback, payload)
     });
 
+    // Listen for open-url event
+    app.on('open-url', (event, url) => {
+      client.write(consts.targetIds.app, consts.eventNames.appEventOpenUrl, {url: url})
+    });
+
     // Read from client
     rl.on('line', function(line){
         // Parse the JSON
         let json = JSON.parse(line)
+
+        // For commands with a success response
+        let success = false;
 
         // Switch on event name
         let window;
@@ -64,6 +73,48 @@ function onReady () {
             // App
             case consts.eventNames.appCmdQuit:
             app.quit();
+            break;
+
+            case consts.eventNames.appCmdSetAsDefaultProtocolClient:
+            success = false
+            if (json.path) {
+              success = app.setAsDefaultProtocolClient(json.protocol, json.path, json.args);
+            } else {
+              if (process.defaultApp) {
+                success = app.setAsDefaultProtocolClient(json.protocol, process.execPath, [path.resolve(process.argv[1])]);
+              } else {
+                success = app.setAsDefaultProtocolClient(json.protocol);
+              }
+            }
+            client.write(consts.targetIds.app, consts.eventNames.appEventSetAsDefaultProtocolClient, {success: success});
+            break;
+
+            case consts.eventNames.appCmdRemoveAsDefaultProtocolClient:
+            success = false
+            if (json.path) {
+              success = app.removeAsDefaultProtocolClient(json.protocol, json.path, json.args);
+            } else {
+              if (process.defaultApp) {
+                success = app.removeAsDefaultProtocolClient(json.protocol, process.execPath, [path.resolve(process.argv[1])]);
+              } else {
+                success = app.removeAsDefaultProtocolClient(json.protocol)
+              }
+            }
+            client.write(consts.targetIds.app, consts.eventNames.appEventRemoveAsDefaultProtocolClient, {success: success});
+            break;
+
+            case consts.eventNames.appCmdIsDefaultProtocolClient:
+            success = false
+            if (json.path) {
+              success = app.isDefaultProtocolClient(json.protocol, json.path, json.args);
+            } else {
+              if (process.defaultApp) {
+                success = app.isDefaultProtocolClient(json.protocol, process.execPath, [path.resolve(process.argv[1])]);
+              } else {
+                success = app.isDefaultProtocolClient(json.protocol);
+              }
+            }
+            client.write(consts.targetIds.app, consts.eventNames.appEventIsDefaultProtocolClient, {success: success});
             break;
 
             // Dock
