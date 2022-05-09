@@ -312,6 +312,9 @@ function onReady () {
             case consts.eventNames.windowCmdSetBounds:
             elements[json.targetID].setBounds(json.bounds, true);
             break;
+            case consts.eventNames.windowCmdSetFullScreen:
+            elements[json.targetID].setFullScreen(json.enable ? json.enable : false)
+            break;
             case consts.eventNames.windowCmdRestore:
             elements[json.targetID].restore()
             break;
@@ -491,8 +494,10 @@ function windowCreateFinish(json) {
         client.write(json.targetID, consts.eventNames.windowEventClosed)
         delete elements[json.targetID]
     })
+    elements[json.targetID].on('enter-full-screen', () => { client.write(json.targetID, consts.eventNames.windowEventEnterFullScreen, {windowOptions: {fullscreen: true}})} )
     elements[json.targetID].on('focus', () => { client.write(json.targetID, consts.eventNames.windowEventFocus) })
     elements[json.targetID].on('hide', () => { client.write(json.targetID, consts.eventNames.windowEventHide) })
+    elements[json.targetID].on('leave-full-screen', () => { client.write(json.targetID, consts.eventNames.windowEventLeaveFullScreen, {windowOptions: {fullscreen: false}})} )
     elements[json.targetID].on('maximize', () => {
         let bounds = elements[json.targetID].getBounds();
         client.write(json.targetID, consts.eventNames.windowEventMaximize, {bounds: bounds});
