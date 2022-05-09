@@ -44,39 +44,39 @@ function onReady () {
     const powerMonitor = electron.powerMonitor
     // Listen to power events
     powerMonitor.on('suspend', function() {
-        client.write(consts.targetIds.power, consts.eventNames.powerEventSuspend)
+        client.write(consts.targetIds.app, consts.eventNames.powerEventSuspend)
     })
 
     powerMonitor.on('resume', function() {
-        client.write(consts.targetIds.power, consts.eventNames.powerEventResume)
+        client.write(consts.targetIds.app, consts.eventNames.powerEventResume)
     })
 
     powerMonitor.on('on-ac', function() {
-        client.write(consts.targetIds.power, consts.eventNames.powerEventOnAC)
+        client.write(consts.targetIds.app, consts.eventNames.powerEventOnAC)
     })
 
     powerMonitor.on('on-battery', function () {
-        client.write(consts.targetIds.power, consts.eventNames.powerEventOnBattery)
+        client.write(consts.targetIds.app, consts.eventNames.powerEventOnBattery)
     })
 
     powerMonitor.on('shutdown', function() {
-        client.write(consts.targetIds.power, consts.eventNames.powerEventShutdown)
+        client.write(consts.targetIds.app, consts.eventNames.powerEventShutdown)
     })
 
     powerMonitor.on('lock-screen', function() {
-        client.write(consts.targetIds.power, consts.eventNames.powerEventLockScreen)
+        client.write(consts.targetIds.app, consts.eventNames.powerEventLockScreen)
     })
 
     powerMonitor.on('unlock-screen', function() {
-        client.write(consts.targetIds.power, consts.eventNames.powerEventUnlockScreen)
+        client.write(consts.targetIds.app, consts.eventNames.powerEventUnlockScreen)
     })
 
     powerMonitor.on('user-did-become-active', function() {
-        client.write(consts.targetIds.power, consts.eventNames.powerEventUserDidBecomeActive)
+        client.write(consts.targetIds.app, consts.eventNames.powerEventUserDidBecomeActive)
     })
 
     powerMonitor.on('user-did-resign-active', function() {
-        client.write(consts.targetIds.power, consts.eventNames.powerEventUserDidResignActive)
+        client.write(consts.targetIds.app, consts.eventNames.powerEventUserDidResignActive)
     })
 
     // Listen on main ipcMain

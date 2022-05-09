@@ -140,7 +140,6 @@ module.exports = {
     },
     targetIds: {
         app: 'app',
-        dock: 'dock',
-        power: 'power'
+        dock: 'dock'
     }
 }
