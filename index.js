@@ -6,6 +6,8 @@ const {app, BrowserWindow, ipcMain, Menu, MenuItem, Tray, dialog, Notification} 
 const consts = require('./src/consts.js')
 const client = require('./src/client.js')
 const readline = require('readline')
+const remoteMain = require('@electron/remote/main')
+remoteMain.initialize();
 
 let rl;
 let callbacks = {};
@@ -455,8 +457,10 @@ function windowCreate(json) {
     }
     json.windowOptions.webPreferences.contextIsolation = false
     json.windowOptions.webPreferences.nodeIntegration = true
-    elements[json.targetID] = new BrowserWindow(json.windowOptions)
+    let window = new BrowserWindow(json.windowOptions)
+    elements[json.targetID] = window
     windowOptions[json.targetID] = json.windowOptions
+    remoteMain.enable(window.webContents);
     if (typeof json.windowOptions.proxy !== "undefined") {
         elements[json.targetID].webContents.session.setProxy(json.windowOptions.proxy)
             .then(() => windowCreateFinish(json))
