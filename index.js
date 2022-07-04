@@ -299,6 +299,10 @@ function onReady () {
             case consts.eventNames.windowCmdMove:
             elements[json.targetID].setPosition(json.windowOptions.x, json.windowOptions.y, true)
             break;
+            case consts.eventNames.windowCmdMoveTop:
+            elements[json.targetID].moveTop()
+            client.write(json.targetID, consts.eventNames.windowEventMovedTop)
+            break;
             case consts.eventNames.windowCmdResize:
             elements[json.targetID].setSize(json.windowOptions.width, json.windowOptions.height, true)
             break;
