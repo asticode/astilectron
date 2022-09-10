@@ -116,7 +116,6 @@ function onReady () {
                             reply: await evalAsync(json.code, json)
                         });
                     } catch (error) {
-                        console.log(error);
                         client.write(json.targetID, consts.eventNames.appExecuteJavaScriptCallback, {
                             error: error.toString()
                         });
