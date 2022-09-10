@@ -104,6 +104,26 @@ function onReady () {
             app.quit();
             break;
 
+            case consts.eventNames.appExecuteJavaScript:
+                (async function () {
+                    let evalAsync = (ev, json) => {
+                        return new Promise((resolve, reject) => {
+                            eval(ev);
+                        });
+                    };
+                    try {
+                        client.write(json.targetID, consts.eventNames.appExecuteJavaScriptCallback, {
+                            reply: await evalAsync(json.code, json)
+                        });
+                    } catch (error) {
+                        console.log(error);
+                        client.write(json.targetID, consts.eventNames.appExecuteJavaScriptCallback, {
+                            error: error.toString()
+                        });
+                    }
+                }());
+                break;
+
             // Dock
             case consts.eventNames.dockCmdBounce:
             let id = 0;

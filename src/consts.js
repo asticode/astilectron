@@ -9,6 +9,8 @@ module.exports = {
         appCmdQuit: "app.cmd.quit",
         appEventReady: "app.event.ready",
         appEventSecondInstance: "app.event.second.instance",
+        appExecuteJavaScript: "app.execute.javascript",
+        appExecuteJavaScriptCallback: "app.execute.javascript.callback",
         displayEventAdded: "display.event.added",
         displayEventMetricsChanged: "display.event.metrics.changed",
         displayEventRemoved: "display.event.removed",
