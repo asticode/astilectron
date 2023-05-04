@@ -251,6 +251,10 @@ function onReady () {
             elements[json.targetID].setImage(json.image);
             client.write(json.targetID, consts.eventNames.trayEventImageSet)
             break;
+            case consts.eventNames.trayCmdPopupContextMenu:
+            trayPopUpContextMenu(json);
+            client.write(json.targetID, consts.eventNames.trayEventPoppedUpContextMenu);    
+            break;
 
             // Web contents
             case consts.eventNames.webContentsEventLoginCallback:
@@ -450,6 +454,16 @@ function trayCreate(json) {
     elements[json.targetID].on('double-click', (index, event) => { client.write(json.targetID, consts.eventNames.trayEventDoubleClicked, {"bounds":{x:event.x, y:event.y,width:event.width,height:event.height}})})
     elements[json.targetID].on('right-click', (index, event) => { client.write(json.targetID, consts.eventNames.trayEventRightClicked, {"bounds":{x:event.x, y:event.y,width:event.width,height:event.height}})})
     client.write(json.targetID, consts.eventNames.trayEventCreated)
+}
+
+// trayPopUpContextMenu pops up the context menu of the tray
+function trayPopUpContextMenu(json) {
+    let menu = menuCreate(json.menu);
+    let position = json.menuPopupOptions;
+    if (!menu && !position) elements[json.targetID].popUpContextMenu();
+    else if (menu && !position) elements[json.targetID].popUpContextMenu(menu);
+    else if (!menu && position) elements[json.targetID].popUpContextMenu(position);
+    else elements[json.targetID].popUpContextMenu(menu, position);
 }
 
 // windowCreate creates a new window
