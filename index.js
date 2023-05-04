@@ -459,15 +459,11 @@ function trayCreate(json) {
 // trayPopUpContextMenu pops up the context menu of the tray
 function trayPopUpContextMenu(json) {
     let menu = menuCreate(json.menu);
-    if (!menu && typeof json.menuPopupOptions === "undefined") {
-        elements[json.targetID].popUpContextMenu();
-    } else if (menu && typeof json.menuPopupOptions === "undefined") {
-        elements[json.targetID].popUpContextMenu(menu);
-    } else if (!menu && typeof json.menuPopupOptions !== "undefined") {
-        elements[json.targetID].popUpContextMenu(json.menuPopupOptions);
-    } else {
-        elements[json.targetID].popUpContextMenu(menu, json.menuPopupOptions);
-    }
+    let position = json.menuPopupOptions;
+    if (!menu && !position) elements[json.targetID].popUpContextMenu();
+    else if (menu && !position) elements[json.targetID].popUpContextMenu(menu);
+    else if (!menu && position) elements[json.targetID].popUpContextMenu(position);
+    else elements[json.targetID].popUpContextMenu(menu, position);
 }
 
 // windowCreate creates a new window
