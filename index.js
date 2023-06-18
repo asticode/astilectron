@@ -2,7 +2,7 @@
 'use strict'
 
 const electron = require('electron')
-const {app, BrowserWindow, ipcMain, Menu, MenuItem, Tray, dialog, Notification} = electron
+const {app, BrowserWindow, ipcMain, Menu, MenuItem, Tray, dialog, Notification, globalShortcut} = electron
 const consts = require('./src/consts.js')
 const client = require('./src/client.js')
 const readline = require('readline')
@@ -349,6 +349,26 @@ function onReady () {
             case consts.eventNames.windowCmdWebContentsExecuteJavascript:
             elements[json.targetID].webContents.executeJavaScript(json.code).then(() => client.write(json.targetID, consts.eventNames.windowEventWebContentsExecutedJavaScript));
             break;
+
+            // Global Shortcut
+            case consts.eventNames.globalShortcutCmdRegister:
+            const isRegistered = globalShortcut.register(json.globalShortcut.accelerator, () => {
+                client.write(json.targetID, consts.eventNames.globalShortcutEventTriggered, {GlobalShortcut:{accelerator: json.globalShortcut.accelerator}});
+            });
+            client.write(json.targetID, consts.eventNames.globalShortcutEventProcessFinished, {GlobalShortcut:{isRegistered: isRegistered}});
+            break;
+            case consts.eventNames.globalShortcutCmdIsRegistered:
+            const isRegistered2 = globalShortcut.isRegistered(json.globalShortcut.accelerator);
+            client.write(json.targetID, consts.eventNames.globalShortcutEventProcessFinished, {GlobalShortcut:{isRegistered: isRegistered2}});
+            break;
+            case consts.eventNames.globalShortcutCmdUnregister:
+            globalShortcut.unregister(json.globalShortcut.accelerator);
+            client.write(json.targetID, consts.eventNames.globalShortcutEventProcessFinished);
+            break
+            case consts.eventNames.globalShortcutCmdUnregisterAll:
+            globalShortcut.unregisterAll();
+            client.write(json.targetID, consts.eventNames.globalShortcutEventProcessFinished);
+            break
         }
     });
 
