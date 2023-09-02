@@ -351,21 +351,20 @@ function onReady () {
             break;
 
             // Global Shortcut
-            case consts.eventNames.globalShortcutCmdRegister:
-            const isRegistered = globalShortcut.register(json.globalShortcut.accelerator, () => {
-                client.write(json.targetID, consts.eventNames.globalShortcutEventTriggered, {GlobalShortcut:{accelerator: json.globalShortcut.accelerator}});
+            case consts.eventNames.globalShortcutEventRegistered:
+            const isRegistered = globalShortcut.register(json.globalShortcuts.accelerator, () => {
+                client.write(json.targetID, consts.eventNames.globalShortcutEventTriggered, {GlobalShortcuts:{accelerator: json.globalShortcuts.accelerator}});
             });
-            client.write(json.targetID, consts.eventNames.globalShortcutEventProcessFinished, {GlobalShortcut:{isRegistered: isRegistered}});
+            client.write(json.targetID, consts.eventNames.globalShortcutEventProcessFinished, {GlobalShortcuts:{isRegistered: isRegistered}});
             break;
-            case consts.eventNames.globalShortcutCmdIsRegistered:
-            const isRegistered2 = globalShortcut.isRegistered(json.globalShortcut.accelerator);
-            client.write(json.targetID, consts.eventNames.globalShortcutEventProcessFinished, {GlobalShortcut:{isRegistered: isRegistered2}});
+            case consts.eventNames.globalShortcutEventIsRegistered:
+            client.write(json.targetID, consts.eventNames.globalShortcutEventProcessFinished, {GlobalShortcuts:{isRegistered: globalShortcut.isRegistered(json.globalShortcuts.accelerator)}});
             break;
-            case consts.eventNames.globalShortcutCmdUnregister:
-            globalShortcut.unregister(json.globalShortcut.accelerator);
+            case consts.eventNames.globalShortcutEventUnregistered:
+            globalShortcut.unregister(json.globalShortcuts.accelerator);
             client.write(json.targetID, consts.eventNames.globalShortcutEventProcessFinished);
             break
-            case consts.eventNames.globalShortcutCmdUnregisterAll:
+            case consts.eventNames.globalShortcutEventUnregisteredAll:
             globalShortcut.unregisterAll();
             client.write(json.targetID, consts.eventNames.globalShortcutEventProcessFinished);
             break
