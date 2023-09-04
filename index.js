@@ -351,22 +351,22 @@ function onReady () {
             break;
 
             // Global Shortcut
-            case consts.eventNames.globalShortcutEventRegistered:
+            case consts.eventNames.globalShortcutsCmdRegister:
             const isRegistered = globalShortcut.register(json.globalShortcuts.accelerator, () => {
-                client.write(json.targetID, consts.eventNames.globalShortcutEventTriggered, {GlobalShortcuts:{accelerator: json.globalShortcuts.accelerator}});
+                client.write(json.targetID, consts.eventNames.globalShortcutsEventTriggered, {globalShortcuts:{accelerator: json.globalShortcuts.accelerator}});
             });
-            client.write(json.targetID, consts.eventNames.globalShortcutEventProcessFinished, {GlobalShortcuts:{isRegistered: isRegistered}});
+            client.write(json.targetID, consts.eventNames.globalShortcutsEventRegistered, {globalShortcuts:{isRegistered: isRegistered}});
             break;
-            case consts.eventNames.globalShortcutEventIsRegistered:
-            client.write(json.targetID, consts.eventNames.globalShortcutEventProcessFinished, {GlobalShortcuts:{isRegistered: globalShortcut.isRegistered(json.globalShortcuts.accelerator)}});
+            case consts.eventNames.globalShortcutsCmdIsRegistered:
+            client.write(json.targetID, consts.eventNames.globalShortcutsEventIsRegistered, {globalShortcuts:{isRegistered: globalShortcut.isRegistered(json.globalShortcuts.accelerator)}});
             break;
-            case consts.eventNames.globalShortcutEventUnregistered:
+            case consts.eventNames.globalShortcutsCmdUnregister:
             globalShortcut.unregister(json.globalShortcuts.accelerator);
-            client.write(json.targetID, consts.eventNames.globalShortcutEventProcessFinished);
+            client.write(json.targetID, consts.eventNames.globalShortcutsEventUnregistered);
             break
-            case consts.eventNames.globalShortcutEventUnregisteredAll:
+            case consts.eventNames.globalShortcutsCmdUnregisterAll:
             globalShortcut.unregisterAll();
-            client.write(json.targetID, consts.eventNames.globalShortcutEventProcessFinished);
+            client.write(json.targetID, consts.eventNames.globalShortcutsEventUnregisteredAll);
             break
         }
     });
