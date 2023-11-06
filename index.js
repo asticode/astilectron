@@ -56,6 +56,56 @@ function onReady () {
             client.write(arg.targetID, consts.eventNames.windowEventMessageCallback, payload)
         });
     }
+    const powerMonitor = electron.powerMonitor
+    // Listen to power events
+    powerMonitor.on('suspend', function() {
+        client.write(consts.targetIds.app, consts.eventNames.powerEventSuspend)
+    })
+
+    powerMonitor.on('resume', function() {
+        client.write(consts.targetIds.app, consts.eventNames.powerEventResume)
+    })
+
+    powerMonitor.on('on-ac', function() {
+        client.write(consts.targetIds.app, consts.eventNames.powerEventOnAC)
+    })
+
+    powerMonitor.on('on-battery', function () {
+        client.write(consts.targetIds.app, consts.eventNames.powerEventOnBattery)
+    })
+
+    powerMonitor.on('shutdown', function() {
+        client.write(consts.targetIds.app, consts.eventNames.powerEventShutdown)
+    })
+
+    powerMonitor.on('lock-screen', function() {
+        client.write(consts.targetIds.app, consts.eventNames.powerEventLockScreen)
+    })
+
+    powerMonitor.on('unlock-screen', function() {
+        client.write(consts.targetIds.app, consts.eventNames.powerEventUnlockScreen)
+    })
+
+    powerMonitor.on('user-did-become-active', function() {
+        client.write(consts.targetIds.app, consts.eventNames.powerEventUserDidBecomeActive)
+    })
+
+    powerMonitor.on('user-did-resign-active', function() {
+        client.write(consts.targetIds.app, consts.eventNames.powerEventUserDidResignActive)
+    })
+
+    // Listen on main ipcMain
+    ipcMain.on(consts.eventNames.ipcEventMessage, (event, arg) => {
+        let payload = {message: arg.message};
+        if (typeof arg.callbackId !== "undefined") payload.callbackId = arg.callbackId;
+        client.write(arg.targetID, consts.eventNames.windowEventMessage, payload)
+    });
+    ipcMain.on(consts.eventNames.ipcEventMessageCallback, (event, arg) => {
+        let payload = {message: arg.message};
+        if (typeof arg.callbackId !== "undefined") payload.callbackId = arg.callbackId;
+        client.write(arg.targetID, consts.eventNames.windowEventMessageCallback, payload)
+    });
+>>>>>>> 8cab200d3589a850ee07212f2de65e61b0229cff
 
     // Read from client
     rl.on('line', function(line){
@@ -174,7 +224,7 @@ function onReady () {
                 client.write(json.targetID, consts.eventNames.sessionEventLoadedExtension)
             })
             break;
-                
+
             // Sub menu
             case consts.eventNames.subMenuCmdAppend:
             elements[json.targetID].append(menuItemCreate(json.menuItem))
@@ -216,6 +266,10 @@ function onReady () {
             case consts.eventNames.trayCmdSetImage:
             elements[json.targetID].setImage(json.image);
             client.write(json.targetID, consts.eventNames.trayEventImageSet)
+            break;
+            case consts.eventNames.trayCmdPopupContextMenu:
+            trayPopUpContextMenu(json);
+            client.write(json.targetID, consts.eventNames.trayEventPoppedUpContextMenu);    
             break;
 
             // Web contents
@@ -265,17 +319,35 @@ function onReady () {
             case consts.eventNames.windowCmdMove:
             elements[json.targetID].setPosition(json.windowOptions.x, json.windowOptions.y, true)
             break;
+            case consts.eventNames.windowCmdMoveTop:
+            elements[json.targetID].moveTop()
+            client.write(json.targetID, consts.eventNames.windowEventMovedTop)
+            break;
             case consts.eventNames.windowCmdResize:
             elements[json.targetID].setSize(json.windowOptions.width, json.windowOptions.height, true)
             break;
+            case consts.eventNames.windowCmdResizeContent:
+            elements[json.targetID].setContentSize(json.windowOptions.width, json.windowOptions.height, true)
+            break;
+            case consts.eventNames.windowCmdSetAlwaysOnTop:
+            elements[json.targetID].setAlwaysOnTop(json.enable ? json.enable : false)
+            client.write(json.targetID, consts.eventNames.windowEventAlwaysOnTopChanged)
+            break;
             case consts.eventNames.windowCmdSetBounds:
             elements[json.targetID].setBounds(json.bounds, true);
+            break;
+            case consts.eventNames.windowCmdSetFullScreen:
+            elements[json.targetID].setFullScreen(json.enable ? json.enable : false)
             break;
             case consts.eventNames.windowCmdRestore:
             elements[json.targetID].restore()
             break;
             case consts.eventNames.windowCmdShow:
             elements[json.targetID].show()
+            break;
+            case consts.eventNames.windowCmdSetContentProtection:
+            elements[json.targetID].setContentProtection(json.enable ? json.enable : false)
+            client.write(json.targetID, consts.eventNames.windowEventContentProtectionSet)
             break;
             case consts.eventNames.windowCmdWebContentsCloseDevTools:
             elements[json.targetID].webContents.closeDevTools()
@@ -401,6 +473,16 @@ function trayCreate(json) {
     client.write(json.targetID, consts.eventNames.trayEventCreated)
 }
 
+// trayPopUpContextMenu pops up the context menu of the tray
+function trayPopUpContextMenu(json) {
+    let menu = menuCreate(json.menu);
+    let position = json.menuPopupOptions;
+    if (!menu && !position) elements[json.targetID].popUpContextMenu();
+    else if (menu && !position) elements[json.targetID].popUpContextMenu(menu);
+    else if (!menu && position) elements[json.targetID].popUpContextMenu(position);
+    else elements[json.targetID].popUpContextMenu(menu, position);
+}
+
 // windowCreate creates a new window
 function windowCreate(json) {
     if (!json.windowOptions.webPreferences) {
@@ -450,17 +532,43 @@ function windowCreateFinish(json) {
             app.quit()
         }, 1000)
     })
+    elements[json.targetID].on('enter-full-screen', () => { client.write(json.targetID, consts.eventNames.windowEventEnterFullScreen, {windowOptions: {fullscreen: true}})} )
     elements[json.targetID].on('focus', () => { client.write(json.targetID, consts.eventNames.windowEventFocus) })
     elements[json.targetID].on('hide', () => { client.write(json.targetID, consts.eventNames.windowEventHide) })
-    elements[json.targetID].on('maximize', () => { client.write(json.targetID, consts.eventNames.windowEventMaximize) })
+    elements[json.targetID].on('leave-full-screen', () => { client.write(json.targetID, consts.eventNames.windowEventLeaveFullScreen, {windowOptions: {fullscreen: false}})} )
+    elements[json.targetID].on('maximize', () => {
+        let bounds = elements[json.targetID].getBounds();
+        client.write(json.targetID, consts.eventNames.windowEventMaximize, {bounds: bounds});
+    })
     elements[json.targetID].on('minimize', () => { client.write(json.targetID, consts.eventNames.windowEventMinimize) })
-    elements[json.targetID].on('move', () => { client.write(json.targetID, consts.eventNames.windowEventMove) })
+    elements[json.targetID].on('move', () => {
+        let bounds = elements[json.targetID].getBounds();
+        client.write(json.targetID, consts.eventNames.windowEventMove, {bounds: bounds});
+    })
+    elements[json.targetID].on('moved', () => {
+        let bounds = elements[json.targetID].getBounds();
+        client.write(json.targetID, consts.eventNames.windowEventMoved, {bounds: bounds});
+    })
     elements[json.targetID].on('ready-to-show', () => { client.write(json.targetID, consts.eventNames.windowEventReadyToShow) })
-    elements[json.targetID].on('resize', () => { client.write(json.targetID, consts.eventNames.windowEventResize) })
+    elements[json.targetID].on('resize', () => {
+        let bounds = elements[json.targetID].getBounds();
+        client.write(json.targetID, consts.eventNames.windowEventResize, {bounds: bounds});
+    })
+    elements[json.targetID].on('resize-content', () => {
+        let bounds = elements[json.targetID].getBounds();
+        client.write(json.targetID, consts.eventNames.windowEventResizeContent, {bounds: bounds})
+    })
     elements[json.targetID].on('restore', () => { client.write(json.targetID, consts.eventNames.windowEventRestore) })
     elements[json.targetID].on('show', () => { client.write(json.targetID, consts.eventNames.windowEventShow) })
-    elements[json.targetID].on('unmaximize', () => { client.write(json.targetID, consts.eventNames.windowEventUnmaximize) })
+    elements[json.targetID].on('unmaximize', () => {
+        let bounds = elements[json.targetID].getBounds();
+        client.write(json.targetID, consts.eventNames.windowEventUnmaximize, {bounds: bounds});
+    })
     elements[json.targetID].on('unresponsive', () => { client.write(json.targetID, consts.eventNames.windowEventUnresponsive) })
+    elements[json.targetID].on('will-move', () => {
+        let bounds = elements[json.targetID].getBounds();
+        client.write(json.targetID, consts.eventNames.windowEventWillMove, {bounds: bounds});
+    })
     elements[json.targetID].webContents.on('did-finish-load', () => {
         elements[json.targetID].webContents.executeJavaScript(
             `const {ipcRenderer} = require('electron')
@@ -515,7 +623,8 @@ function windowCreateFinish(json) {
             document.dispatchEvent(new Event('astilectron-ready'))`
         )
         sessionCreate(elements[json.targetID].webContents, json.sessionId)
-        client.write(json.targetID, consts.eventNames.windowEventDidFinishLoad)
+        let bounds = elements[json.targetID].getBounds();
+        client.write(json.targetID, consts.eventNames.windowEventDidFinishLoad, {bounds: bounds})
     })
     elements[json.targetID].webContents.on('did-get-redirect-request', (event, oldUrl, newUrl) => {
         client.write(json.targetID, consts.eventNames.windowEventDidGetRedirectRequest, {
