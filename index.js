@@ -55,6 +55,26 @@ function onReady () {
             if (typeof arg.callbackId !== "undefined") payload.callbackId = arg.callbackId;
             client.write(arg.targetID, consts.eventNames.windowEventMessageCallback, payload)
         });
+        ipcMain.handle(consts.eventNames.sessionCmdSetWillDownloadExtensions, (event, possibleExtensions) => {
+            BrowserWindow.getFocusedWindow().webContents.session.on('will-download', (event, item) => {
+                let extension = item.getFilename().split('.').pop()
+                let extensionLabel = possibleExtensions[extension] ?? `Fichier ${extension}`
+                item.setSaveDialogOptions({
+                    filters: [
+                        {name: extensionLabel, extensions: [extension]},
+                    ],
+                });
+            });
+        });
+
+        ipcMain.handle(consts.eventNames.dialogShowOpen, async (event, options) => {
+            const res = await dialog.showOpenDialog(options)
+            return res
+        })
+        ipcMain.handle(consts.eventNames.dialogShowSave, async (event, options) => {
+            const res = await dialog.showSaveDialog(options)
+            return res
+        })
 
         const powerMonitor = electron.powerMonitor
         // Listen to power events
@@ -478,6 +498,7 @@ function windowCreate(json) {
     }
     json.windowOptions.webPreferences.contextIsolation = false
     json.windowOptions.webPreferences.nodeIntegration = true
+    json.windowOptions.webPreferences.enableRemoteModule = true
     elements[json.targetID] = new BrowserWindow(json.windowOptions)
     windowOptions[json.targetID] = json.windowOptions
     if (typeof json.windowOptions.proxy !== "undefined") {
