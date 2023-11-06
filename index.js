@@ -55,57 +55,45 @@ function onReady () {
             if (typeof arg.callbackId !== "undefined") payload.callbackId = arg.callbackId;
             client.write(arg.targetID, consts.eventNames.windowEventMessageCallback, payload)
         });
+
+        const powerMonitor = electron.powerMonitor
+        // Listen to power events
+        powerMonitor.on('suspend', function() {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventSuspend)
+        })
+    
+        powerMonitor.on('resume', function() {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventResume)
+        })
+    
+        powerMonitor.on('on-ac', function() {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventOnAC)
+        })
+    
+        powerMonitor.on('on-battery', function () {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventOnBattery)
+        })
+    
+        powerMonitor.on('shutdown', function() {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventShutdown)
+        })
+    
+        powerMonitor.on('lock-screen', function() {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventLockScreen)
+        })
+    
+        powerMonitor.on('unlock-screen', function() {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventUnlockScreen)
+        })
+    
+        powerMonitor.on('user-did-become-active', function() {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventUserDidBecomeActive)
+        })
+    
+        powerMonitor.on('user-did-resign-active', function() {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventUserDidResignActive)
+        })
     }
-    const powerMonitor = electron.powerMonitor
-    // Listen to power events
-    powerMonitor.on('suspend', function() {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventSuspend)
-    })
-
-    powerMonitor.on('resume', function() {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventResume)
-    })
-
-    powerMonitor.on('on-ac', function() {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventOnAC)
-    })
-
-    powerMonitor.on('on-battery', function () {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventOnBattery)
-    })
-
-    powerMonitor.on('shutdown', function() {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventShutdown)
-    })
-
-    powerMonitor.on('lock-screen', function() {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventLockScreen)
-    })
-
-    powerMonitor.on('unlock-screen', function() {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventUnlockScreen)
-    })
-
-    powerMonitor.on('user-did-become-active', function() {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventUserDidBecomeActive)
-    })
-
-    powerMonitor.on('user-did-resign-active', function() {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventUserDidResignActive)
-    })
-
-    // Listen on main ipcMain
-    ipcMain.on(consts.eventNames.ipcEventMessage, (event, arg) => {
-        let payload = {message: arg.message};
-        if (typeof arg.callbackId !== "undefined") payload.callbackId = arg.callbackId;
-        client.write(arg.targetID, consts.eventNames.windowEventMessage, payload)
-    });
-    ipcMain.on(consts.eventNames.ipcEventMessageCallback, (event, arg) => {
-        let payload = {message: arg.message};
-        if (typeof arg.callbackId !== "undefined") payload.callbackId = arg.callbackId;
-        client.write(arg.targetID, consts.eventNames.windowEventMessageCallback, payload)
-    });
->>>>>>> 8cab200d3589a850ee07212f2de65e61b0229cff
 
     // Read from client
     rl.on('line', function(line){
