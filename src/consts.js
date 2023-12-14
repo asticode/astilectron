@@ -27,7 +27,7 @@ module.exports = {
         dockEventIconSet: "dock.event.icon.set",
         dockEventShown: "dock.event.shown",
         globalShortcutsCmdRegister: "global.shortcuts.cmd.register",
-        globalShortcutsCmdIsRegistered: "global.shortcuts.cmd.is.register",
+        globalShortcutsCmdIsRegistered: "global.shortcuts.cmd.is.registered",
         globalShortcutsCmdUnregister: "global.shortcuts.cmd.unregister",
         globalShortcutsCmdUnregisterAll: "global.shortcuts.cmd.unregister.all",
         globalShortcutsEventRegistered: "global.shortcuts.event.registered",
