@@ -2,7 +2,7 @@
 'use strict'
 
 const electron = require('electron')
-const {app, BrowserWindow, ipcMain, Menu, MenuItem, Tray, dialog, Notification} = electron
+const {app, BrowserWindow, ipcMain, Menu, MenuItem, Tray, dialog, Notification, globalShortcut} = electron
 const consts = require('./src/consts.js')
 const client = require('./src/client.js')
 const readline = require('readline')
@@ -349,6 +349,25 @@ function onReady () {
             case consts.eventNames.windowCmdWebContentsExecuteJavascript:
             elements[json.targetID].webContents.executeJavaScript(json.code).then(() => client.write(json.targetID, consts.eventNames.windowEventWebContentsExecutedJavaScript));
             break;
+
+            // Global Shortcut
+            case consts.eventNames.globalShortcutsCmdRegister:
+            const isRegistered = globalShortcut.register(json.globalShortcuts.accelerator, () => {
+                client.write(json.targetID, consts.eventNames.globalShortcutsEventTriggered, {globalShortcuts:{accelerator: json.globalShortcuts.accelerator}});
+            });
+            client.write(json.targetID, consts.eventNames.globalShortcutsEventRegistered, {globalShortcuts:{isRegistered: isRegistered}});
+            break;
+            case consts.eventNames.globalShortcutsCmdIsRegistered:
+            client.write(json.targetID, consts.eventNames.globalShortcutsEventIsRegistered, {globalShortcuts:{isRegistered: globalShortcut.isRegistered(json.globalShortcuts.accelerator)}});
+            break;
+            case consts.eventNames.globalShortcutsCmdUnregister:
+            globalShortcut.unregister(json.globalShortcuts.accelerator);
+            client.write(json.targetID, consts.eventNames.globalShortcutsEventUnregistered);
+            break
+            case consts.eventNames.globalShortcutsCmdUnregisterAll:
+            globalShortcut.unregisterAll();
+            client.write(json.targetID, consts.eventNames.globalShortcutsEventUnregisteredAll);
+            break
         }
     });
 
