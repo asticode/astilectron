@@ -2,14 +2,23 @@
 
 const net = require("net");
 const url = require("url");
+const WebSocket = require("ws");
 
 // Client can read/write messages from a TCP server
 class Client {
   // init initializes the Client
   init(addr) {
-    let u = url.parse("tcp://" + addr, false, false);
-    this.socket = new net.Socket();
-    this.socket.connect(u.port, u.hostname, function() {});
+    if(addr.indexOf('wss://') == 0) {
+      const ws = new WebSocket(addr, {
+        origin: addr.replace('wss://', 'https://'),
+        rejectUnauthorized: false
+      });
+      this.socket = WebSocket.createWebSocketStream(ws);
+    } else {
+      let u = url.parse("tcp://" + addr, false, false);
+      this.socket = new net.Socket();
+      this.socket.connect(u.port, u.hostname, function() {});  
+    }
     this.socket.on("close", function() {
       process.exit();
     });
