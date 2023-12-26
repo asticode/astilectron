@@ -79,6 +79,9 @@ function onReady () {
             const res = await electron.desktopCapturer.getSources({ types: ['window', 'screen'] })
             return res
         })
+        ipcMain.handle(consts.eventNames.webContentsMediaSourceID, async () => {
+            return electron.webContents.getMediaSourceId()
+        })
 
         const powerMonitor = electron.powerMonitor
         // Listen to power events
