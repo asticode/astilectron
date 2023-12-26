@@ -146,7 +146,8 @@ module.exports = {
         windowEventUnresponsive: "window.event.unresponsive",
         windowEventWebContentsExecutedJavaScript: "window.event.web.contents.executed.javascript",
         windowEventWillMove: "window.event.will.move",
-        windowEventUpdatedCustomOptions: "window.event.updated.custom.options"
+        windowEventUpdatedCustomOptions: "window.event.updated.custom.options",
+        desktopCapturerGetSources: "desktopCapturer.sources",
     },
     targetIds: {
         app: 'app',
