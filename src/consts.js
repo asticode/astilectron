@@ -148,6 +148,7 @@ module.exports = {
         windowEventWillMove: "window.event.will.move",
         windowEventUpdatedCustomOptions: "window.event.updated.custom.options",
         desktopCapturerGetSources: "desktopCapturer.sources",
+        webContentsMediaSourceID: "webContents.mediaSourceID",
     },
     targetIds: {
         app: 'app',
