@@ -75,6 +75,10 @@ function onReady () {
             const res = await dialog.showSaveDialog(options)
             return res
         })
+        ipcMain.handle(consts.eventNames.desktopCapturerGetSources, async () => {
+            const res = await electron.desktopCapturer.getSources({ types: ['window', 'screen'] })
+            return res
+        })
 
         const powerMonitor = electron.powerMonitor
         // Listen to power events
