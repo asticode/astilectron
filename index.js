@@ -80,7 +80,7 @@ function onReady () {
             return res
         })
         ipcMain.handle(consts.eventNames.webContentsMediaSourceID, async () => {
-            return BrowserWindow.getFocusedWindow().webContents.getMediaSourceId()
+            return getLastWindow().getMediaSourceId()
         })
 
         const powerMonitor = electron.powerMonitor
