@@ -1,5 +1,9 @@
 `astilectron` is an Electron app that provides an API over a TCP socket that allows executing Electron's method as well as capturing Electron's events.
 
+# Warning
+
+This project is not maintained anymore.
+
 # Architecture
 
     +-----------------------+    TCP    +-------------+    IPC   +---------------------+
