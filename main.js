@@ -3,6 +3,15 @@
 const { app } = require("electron");
 const { start, getLastWindow, client, consts } = require("./index");
 
+process
+  .on('unhandledRejection', (reason, p) => {
+    //console.error(reason, 'Unhandled Rejection at Promise', p);
+  })
+  .on('uncaughtException', err => {
+    //console.error(err, 'Uncaught Exception thrown');
+    //process.exit(1);
+  });
+
 // edge case when the program is launched without arguments
 if (process.argv.length == 1) {
   app.requestSingleInstanceLock();

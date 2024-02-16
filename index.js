@@ -14,6 +14,7 @@ let elements = {};
 let windowOptions = {};
 let menus = {};
 let quittingApp = false;
+let didReady = false;
 
 // Single instance
 let lastWindowId = null;
@@ -30,66 +31,96 @@ function onReady () {
     const screen = electron.screen
     Menu.setApplicationMenu(null)
 
-    // Listen to screen events
-    screen.on('display-added', function() {
-        client.write(consts.targetIds.app, consts.eventNames.displayEventAdded, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
-    })
-    screen.on('display-metrics-changed', function() {
-        client.write(consts.targetIds.app, consts.eventNames.displayEventMetricsChanged, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
-    })
-    screen.on('display-removed', function() {
-        client.write(consts.targetIds.app, consts.eventNames.displayEventRemoved, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
-    })
+    if (!didReady) {
+        didReady = true
+        // Listen to screen events
+        screen.on('display-added', function() {
+            client.write(consts.targetIds.app, consts.eventNames.displayEventAdded, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
+        })
+        screen.on('display-metrics-changed', function() {
+            client.write(consts.targetIds.app, consts.eventNames.displayEventMetricsChanged, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
+        })
+        screen.on('display-removed', function() {
+            client.write(consts.targetIds.app, consts.eventNames.displayEventRemoved, {displays: {all: screen.getAllDisplays(), primary: screen.getPrimaryDisplay()}})
+        })
 
-    const powerMonitor = electron.powerMonitor
-    // Listen to power events
-    powerMonitor.on('suspend', function() {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventSuspend)
-    })
+        // Listen on main ipcMain
+        ipcMain.on(consts.eventNames.ipcEventMessage, (event, arg) => {
+            let payload = {message: arg.message};
+            if (typeof arg.callbackId !== "undefined") payload.callbackId = arg.callbackId;
+            client.write(arg.targetID, consts.eventNames.windowEventMessage, payload)
+        });
+        ipcMain.on(consts.eventNames.ipcEventMessageCallback, (event, arg) => {
+            let payload = {message: arg.message};
+            if (typeof arg.callbackId !== "undefined") payload.callbackId = arg.callbackId;
+            client.write(arg.targetID, consts.eventNames.windowEventMessageCallback, payload)
+        });
+        ipcMain.handle(consts.eventNames.sessionCmdSetWillDownloadExtensions, (event, possibleExtensions) => {
+            BrowserWindow.getFocusedWindow().webContents.session.on('will-download', (event, item) => {
+                let extension = item.getFilename().split('.').pop()
+                let extensionLabel = possibleExtensions[extension] ?? `Fichier ${extension}`
+                item.setSaveDialogOptions({
+                    filters: [
+                        {name: extensionLabel, extensions: [extension]},
+                    ],
+                });
+            });
+        });
 
-    powerMonitor.on('resume', function() {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventResume)
-    })
+        ipcMain.handle(consts.eventNames.dialogShowOpen, async (event, options) => {
+            const res = await dialog.showOpenDialog(options)
+            return res
+        })
+        ipcMain.handle(consts.eventNames.dialogShowSave, async (event, options) => {
+            const res = await dialog.showSaveDialog(options)
+            return res
+        })
+        ipcMain.handle(consts.eventNames.desktopCapturerGetSources, async () => {
+            const res = await electron.desktopCapturer.getSources({ types: ['window', 'screen'] })
+            return res
+        })
+        ipcMain.handle(consts.eventNames.webContentsMediaSourceID, async () => {
+            return getLastWindow().getMediaSourceId()
+        })
 
-    powerMonitor.on('on-ac', function() {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventOnAC)
-    })
-
-    powerMonitor.on('on-battery', function () {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventOnBattery)
-    })
-
-    powerMonitor.on('shutdown', function() {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventShutdown)
-    })
-
-    powerMonitor.on('lock-screen', function() {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventLockScreen)
-    })
-
-    powerMonitor.on('unlock-screen', function() {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventUnlockScreen)
-    })
-
-    powerMonitor.on('user-did-become-active', function() {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventUserDidBecomeActive)
-    })
-
-    powerMonitor.on('user-did-resign-active', function() {
-        client.write(consts.targetIds.app, consts.eventNames.powerEventUserDidResignActive)
-    })
-
-    // Listen on main ipcMain
-    ipcMain.on(consts.eventNames.ipcEventMessage, (event, arg) => {
-        let payload = {message: arg.message};
-        if (typeof arg.callbackId !== "undefined") payload.callbackId = arg.callbackId;
-        client.write(arg.targetID, consts.eventNames.windowEventMessage, payload)
-    });
-    ipcMain.on(consts.eventNames.ipcEventMessageCallback, (event, arg) => {
-        let payload = {message: arg.message};
-        if (typeof arg.callbackId !== "undefined") payload.callbackId = arg.callbackId;
-        client.write(arg.targetID, consts.eventNames.windowEventMessageCallback, payload)
-    });
+        const powerMonitor = electron.powerMonitor
+        // Listen to power events
+        powerMonitor.on('suspend', function() {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventSuspend)
+        })
+    
+        powerMonitor.on('resume', function() {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventResume)
+        })
+    
+        powerMonitor.on('on-ac', function() {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventOnAC)
+        })
+    
+        powerMonitor.on('on-battery', function () {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventOnBattery)
+        })
+    
+        powerMonitor.on('shutdown', function() {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventShutdown)
+        })
+    
+        powerMonitor.on('lock-screen', function() {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventLockScreen)
+        })
+    
+        powerMonitor.on('unlock-screen', function() {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventUnlockScreen)
+        })
+    
+        powerMonitor.on('user-did-become-active', function() {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventUserDidBecomeActive)
+        })
+    
+        powerMonitor.on('user-did-resign-active', function() {
+            client.write(consts.targetIds.app, consts.eventNames.powerEventUserDidResignActive)
+        })
+    }
 
     // Read from client
     rl.on('line', function(line){
@@ -385,15 +416,16 @@ function onReady () {
 
 // start begins listening to go-astilectron.
 function start(address = process.argv[2]) {
-    client.init(address);
-    rl = readline.createInterface({ input: client.socket });
+    client.init(address, function () {
+        rl = readline.createInterface({ input: client.socket });
+        if (app.isReady()) {
+            onReady();
+        } else {
+            app.on("ready", onReady);
+        }
+    });
 
     app.on("before-quit", beforeQuit);
-    if (app.isReady()) {
-        onReady();
-    } else {
-        app.on("ready", onReady);
-    }
     app.on("window-all-closed", app.quit);
 }
 
@@ -492,6 +524,7 @@ function windowCreate(json) {
     }
     json.windowOptions.webPreferences.contextIsolation = false
     json.windowOptions.webPreferences.nodeIntegration = true
+    json.windowOptions.webPreferences.enableRemoteModule = true
     elements[json.targetID] = new BrowserWindow(json.windowOptions)
     windowOptions[json.targetID] = json.windowOptions
     if (typeof json.windowOptions.proxy !== "undefined") {
@@ -530,6 +563,9 @@ function windowCreateFinish(json) {
     elements[json.targetID].on('closed', () => {
         client.write(json.targetID, consts.eventNames.windowEventClosed)
         delete elements[json.targetID]
+        setTimeout(() => {
+            app.quit()
+        }, 1000)
     })
     elements[json.targetID].on('enter-full-screen', () => { client.write(json.targetID, consts.eventNames.windowEventEnterFullScreen, {windowOptions: {fullscreen: true}})} )
     elements[json.targetID].on('focus', () => { client.write(json.targetID, consts.eventNames.windowEventFocus) })

@@ -12,6 +12,8 @@ module.exports = {
         displayEventAdded: "display.event.added",
         displayEventMetricsChanged: "display.event.metrics.changed",
         displayEventRemoved: "display.event.removed",
+        dialogShowOpen: "dialog.show.open",
+        dialogShowSave: "dialog.show.save",
         dockCmdBounce: "dock.cmd.bounce",
         dockCmdBounceDownloads: "dock.cmd.bounce.downloads",
         dockCmdCancelBounce: "dock.cmd.cancel.bounce",
@@ -73,6 +75,7 @@ module.exports = {
         sessionCmdClearCache: "session.cmd.clear.cache",
         sessionCmdFlushStorage: "session.cmd.flush.storage",
         sessionCmdLoadExtension: "session.cmd.load.extension",
+        sessionCmdSetWillDownloadExtensions: "session.cmd.set-will-download-extensions",
         sessionEventClearedCache: "session.event.cleared.cache",
         sessionEventWillDownload: "session.event.will.download",
         sessionEventFlushedStorage: "session.event.flushed.storage",
@@ -152,7 +155,9 @@ module.exports = {
         windowEventUnresponsive: "window.event.unresponsive",
         windowEventWebContentsExecutedJavaScript: "window.event.web.contents.executed.javascript",
         windowEventWillMove: "window.event.will.move",
-        windowEventUpdatedCustomOptions: "window.event.updated.custom.options"
+        windowEventUpdatedCustomOptions: "window.event.updated.custom.options",
+        desktopCapturerGetSources: "desktopCapturer.sources",
+        webContentsMediaSourceID: "webContents.mediaSourceID",
     },
     targetIds: {
         app: 'app',

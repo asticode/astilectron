@@ -6,13 +6,16 @@ const url = require("url");
 // Client can read/write messages from a TCP server
 class Client {
   // init initializes the Client
-  init(addr) {
+  init(addr, onConnect) {
     let u = url.parse("tcp://" + addr, false, false);
     this.socket = new net.Socket();
-    this.socket.connect(u.port, u.hostname, function() {});
+    this.socket.connect(u.port, u.hostname, onConnect);
     this.socket.on("close", function() {
-      process.exit();
-    });
+      // Socket closed, try to reconnect
+      setTimeout(() => {
+        this.init(addr, onConnect);
+      }, 200)
+    }.bind(this));
     this.socket.on("error", function(err) {
       // Prevent Unhandled Exception resulting from TCP Error
       console.error(err);
